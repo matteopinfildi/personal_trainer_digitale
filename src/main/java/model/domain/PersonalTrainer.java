@@ -11,7 +11,6 @@ public class PersonalTrainer {
         this.cognome = cognome;
     }
 
-    // Getter
     public String getCfPersonal() {
         return cfPersonal;
     }
@@ -24,18 +23,6 @@ public class PersonalTrainer {
         return cognome;
     }
 
-    // Setter
-    public void setCfPersonal(String cfPersonal) {
-        this.cfPersonal = cfPersonal;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
 
     @Override
     public String toString() {

@@ -7,22 +7,20 @@ public class Atleta {
     private String nome;
     private String cognome;
     private LocalDate dataNascita;
-    private String cfPersonal; // può essere null
+    private PersonalTrainer personalTrainer;
 
-    public Atleta(String cfAtleta, String nome, String cognome, LocalDate dataNascita, String cfPersonal) {
+    public Atleta(String cfAtleta, String nome, String cognome, LocalDate dataNascita, PersonalTrainer personalTrainer) {
         this.cfAtleta = cfAtleta;
         this.nome = nome;
         this.cognome = cognome;
         this.dataNascita = dataNascita;
-        this.cfPersonal = cfPersonal;
+        this.personalTrainer = personalTrainer;
     }
 
-    // Overload costruttore senza personal trainer
     public Atleta(String cfAtleta, String nome, String cognome, LocalDate dataNascita) {
         this(cfAtleta, nome, cognome, dataNascita, null);
     }
 
-    // Getter
     public String getCfAtleta() {
         return cfAtleta;
     }
@@ -39,29 +37,8 @@ public class Atleta {
         return dataNascita;
     }
 
-    public String getCfPersonal() {
-        return cfPersonal;
-    }
-
-    // Setter
-    public void setCfAtleta(String cfAtleta) {
-        this.cfAtleta = cfAtleta;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
-
-    public void setDataNascita(LocalDate dataNascita) {
-        this.dataNascita = dataNascita;
-    }
-
-    public void setCfPersonal(String cfPersonal) {
-        this.cfPersonal = cfPersonal;
+    public PersonalTrainer getPersonalTrainer() {
+        return personalTrainer;
     }
 
     @Override
@@ -71,7 +48,7 @@ public class Atleta {
                 ", nome='" + nome + '\'' +
                 ", cognome='" + cognome + '\'' +
                 ", dataNascita=" + dataNascita +
-                ", cfPersonal=" + (cfPersonal != null ? cfPersonal : "Nessun personal trainer") +
+                ", personalTrainer=" + (personalTrainer != null ? personalTrainer.getCfPersonal() : "Nessun PT") +
                 '}';
     }
 }
