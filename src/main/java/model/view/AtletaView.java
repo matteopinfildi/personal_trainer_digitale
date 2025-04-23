@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class AtletaView {
 
-    private AtletaView(){}
+    private AtletaView() {}
 
     public static int getOp() throws IOException {
         System.out.println("**************************");
@@ -23,12 +23,31 @@ public class AtletaView {
 
         while (true) {
             System.out.print("Scegli una operazione: ");
-
             op = Integer.parseInt(LoginView.reader.readLine());
 
-            if (op >= 1 && op <= 12) break;
+            if (op >= 1 && op <= 7) break;
             System.out.println("Il numero che hai inserito non corrisponde ad alcuna operazione.\n");
         }
         return op;
+    }
+
+    public static String getCFAtleta() throws IOException {
+        System.out.print("Inserisci il codice fiscale dell'atleta: ");
+        return LoginView.reader.readLine();
+    }
+
+    public static String getData() throws IOException {
+        System.out.print("Inserisci la data (YYYY-MM-DD): ");
+        return LoginView.reader.readLine();
+    }
+
+    public static int getCodiceEsercizio() throws IOException {
+        System.out.print("Inserisci il codice dell'esercizio: ");
+        return Integer.parseInt(LoginView.reader.readLine());
+    }
+
+    public static int getDurata() throws IOException {
+        System.out.print("Inserisci la durata dell'allenamento (minuti): ");
+        return Integer.parseInt(LoginView.reader.readLine());
     }
 }

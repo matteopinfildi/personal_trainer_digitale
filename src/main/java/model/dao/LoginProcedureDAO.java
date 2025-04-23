@@ -11,6 +11,7 @@ import java.sql.Types;
 
 public class LoginProcedureDAO {
     public Credentials logIn(String username, String password) throws DAOException {
+        String codiceFiscale;
         int role;
 
         try{
