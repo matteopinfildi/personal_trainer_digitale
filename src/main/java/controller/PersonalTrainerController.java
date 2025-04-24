@@ -8,7 +8,6 @@ import model.view.PersonalTrainerView;
 import model.domain.Role;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 public class PersonalTrainerController implements Controller {

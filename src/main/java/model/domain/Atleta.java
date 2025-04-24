@@ -17,6 +17,8 @@ public class Atleta {
         this.personalTrainer = personalTrainer;
     }
 
+    public Atleta(String cfAtleta){this.cfAtleta = cfAtleta;}
+
     public Atleta(String cfAtleta, String nome, String cognome, LocalDate dataNascita) {
         this(cfAtleta, nome, cognome, dataNascita, null);
     }

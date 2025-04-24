@@ -15,6 +15,8 @@ public class Esercizio {
         this.ripetizioni = ripetizioni;
     }
 
+    public Esercizio (int codiceEs){this.codiceEs = codiceEs;}
+
     public int getCodiceEs() {
         return codiceEs;
     }

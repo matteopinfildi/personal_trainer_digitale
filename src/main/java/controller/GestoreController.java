@@ -1,127 +1,100 @@
 package controller;
 
-import controller.Controller;
+import exception.DAOException;
 import model.dao.ConnectionFactory;
-import model.dao.GestoreDAO;
+import model.dao.EserciziDAO;
+import model.dao.MacchinarioDAO;
 import model.domain.Esercizio;
 import model.domain.Macchinario;
 import model.view.GestoreView;
+import model.domain.Role;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class GestoreController implements Controller {
 
-    private final GestoreDAO gestoreDAO;
-
-    public GestoreController() throws SQLException {
-        Connection connection = ConnectionFactory.getConnection();
-        this.gestoreDAO = new GestoreDAO(connection);
-    }
-
     @Override
     public void start() throws IOException {
+        ConnectionFactory.changeRole(Role.GESTORE);
         int op;
+
         while (true) {
             op = GestoreView.getOp();
             switch (op) {
-                case 1:
-                    this.aggiornaEsercizio();
-                    break;
-                case 2:
-                    this.aggiornaMacchinario();
-                    break;
-                case 3:
-                    this.eliminaEsercizio();
-                    break;
-                case 4:
-                    this.eliminaMacchinario();
-                    break;
-                case 5:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Operazione non valida");
-                    break;
+                case 1 -> inserisciEsercizio();
+                case 2 -> eliminaEsercizio();
+                case 3 -> aggiungiMacchinario();
+                case 4 -> eliminaMacchinario();
+                case 5 -> System.exit(0);
             }
         }
     }
 
-    private void aggiornaEsercizio() throws IOException {
-        // Creazione dell'oggetto Esercizio
-        int codiceEsercizio = GestoreView.getCodiceEsercizio();
-        String nome = GestoreView.getNomeEsercizio();
-        String descrizione = GestoreView.getDescrizioneEsercizio();
-        int numSerie = GestoreView.getNumSerie();
-        int ripetizioni = GestoreView.getRipetizioni();
-
-        // Creazione dell'oggetto Esercizio da passare al DAO
-        Esercizio esercizio = new Esercizio(codiceEsercizio, nome, descrizione, numSerie, ripetizioni);
-
+    private void inserisciEsercizio() {
         try {
-            gestoreDAO.aggiornaEsercizio(esercizio);
-            System.out.println("Esercizio aggiornato.");
-        } catch (SQLException e) {
-            System.err.println("Errore nell'aggiornamento dell'esercizio: " + e.getMessage());
+            Esercizio esercizio = GestoreView.getEsercizio();
+            EserciziDAO dao = new EserciziDAO();
+            dao.aggiungiEsercizio(esercizio);
+            GestoreView.showOutput("Esercizio inserito con successo!");
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore: " + e.getMessage());
         }
     }
 
-    private void aggiornaMacchinario() throws IOException {
-        // Creazione dell'oggetto Macchinario
-        int codiceEsercizio = GestoreView.getCodiceEsercizio();
-        String nomeEs = GestoreView.getNomeEsercizio();
-        String descrizioneEs = GestoreView.getDescrizioneEsercizio();
-        String nome = GestoreView.getNomeMacchinario();
-        String descrizione = GestoreView.getDescrizioneMacchinario();
-        int numSerie = GestoreView.getNumSerie();
-        int ripetizioni = GestoreView.getRipetizioni();
-
-        // Creazione dell'oggetto Esercizio
-        Esercizio esercizio = new Esercizio(codiceEsercizio, nomeEs, descrizioneEs, numSerie, ripetizioni);
-        Macchinario macchinario = new Macchinario(esercizio, nome, descrizione);
-
+    private void eliminaEsercizio() {
         try {
-            gestoreDAO.aggiornaMacchinario(macchinario);
-            System.out.println("Macchinario aggiornato.");
-        } catch (SQLException e) {
-            System.err.println("Errore nell'aggiornamento del macchinario: " + e.getMessage());
+            int codiceEs = GestoreView.getCodiceEsercizio();
+            EserciziDAO dao = new EserciziDAO();
+            dao.eliminaEsercizio(codiceEs);
+            GestoreView.showOutput("Esercizio eliminato correttamente!");
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore: " + e.getMessage());
         }
     }
 
-    private void eliminaEsercizio() throws IOException {
-        // Creazione dell'oggetto Esercizio
-        int codiceEsercizio = GestoreView.getCodiceEsercizio();
-        String nome = GestoreView.getNomeEsercizio();
-        String descrizione = GestoreView.getDescrizioneEsercizio();
-        int numSerie = GestoreView.getNumSerie();
-        int ripetizioni = GestoreView.getRipetizioni();
-        Esercizio esercizio = new Esercizio(codiceEsercizio, nome, descrizione, numSerie, ripetizioni);
-
+    private void aggiungiMacchinario() {
         try {
-            gestoreDAO.eliminaEsercizio(esercizio);
-            System.out.println("Esercizio eliminato.");
-        } catch (SQLException e) {
-            System.err.println("Errore nell'eliminazione dell'esercizio: " + e.getMessage());
+            // Ottieni il codice dell'esercizio dalla view
+            int codiceEs = GestoreView.getCodiceEsercizio();
+            EserciziDAO eserciziDAO = new EserciziDAO();
+            // Recupera l'esercizio dal database
+            Esercizio esercizio = eserciziDAO.getEsercizioByCodice(codiceEs);
+
+            // Ottieni le informazioni sul macchinario dalla view
+            String nome = GestoreView.getNomeMacchinario();
+            String descrizione = GestoreView.getDescrizioneMacchinario();
+
+            // Crea un oggetto Macchinario
+            Macchinario macchinario = new Macchinario(esercizio, nome, descrizione);
+
+            // Crea un'istanza della DAO e inserisci il macchinario
+            MacchinarioDAO macchinarioDAO = new MacchinarioDAO();
+            macchinarioDAO.aggiungiMacchinario(macchinario);
+
+            // Mostra messaggio di successo
+            GestoreView.showOutput("Macchinario aggiunto correttamente!");
+
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore nell'aggiungere il macchinario: " + e.getMessage());
         }
     }
 
-    private void eliminaMacchinario() throws IOException {
-        // Creazione dell'oggetto Macchinario
-        int codiceEsercizio = GestoreView.getCodiceEsercizio();
-        String nome = GestoreView.getNomeEsercizio();
-        String descrizione = GestoreView.getDescrizioneEsercizio();
-        int numSerie = GestoreView.getNumSerie();
-        int ripetizioni = GestoreView.getRipetizioni();
-        String nomeM = GestoreView.getNomeMacchinario();
-        String descrizioneM = GestoreView.getDescrizioneMacchinario();
-        Macchinario macchinario = new Macchinario(new Esercizio(codiceEsercizio, nome, descrizione, numSerie, ripetizioni), nomeM, descrizioneM);
-
+    private void eliminaMacchinario() {
         try {
-            gestoreDAO.eliminaMacchinario(macchinario);
-            System.out.println("Macchinario eliminato.");
-        } catch (SQLException e) {
-            System.err.println("Errore nell'eliminazione del macchinario: " + e.getMessage());
+            // Ottieni il nome del macchinario dalla view
+            String nomeMacchinario = GestoreView.getNomeMacchinario();
+
+            // Crea un'istanza della DAO per eliminare il macchinario
+            MacchinarioDAO macchinarioDAO = new MacchinarioDAO();
+
+            // Esegui l'eliminazione del macchinario tramite la DAO
+            macchinarioDAO.eliminaMacchinario(nomeMacchinario);
+
+            // Mostra il messaggio di successo
+            GestoreView.showOutput("Macchinario eliminato correttamente!");
+
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore nell'eliminare il macchinario: " + e.getMessage());
         }
     }
 }

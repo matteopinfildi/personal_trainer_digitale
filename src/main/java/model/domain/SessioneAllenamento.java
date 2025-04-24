@@ -14,7 +14,11 @@ public class SessioneAllenamento {
         this.durata = durata;
     }
 
-    // Getter
+    public  SessioneAllenamento(Atleta atleta, LocalDate dataAllenamento) {
+        this.atleta = atleta;
+        this.dataAllenamento = dataAllenamento;
+    }
+
     public Atleta getAtleta() {
         return atleta;
     }

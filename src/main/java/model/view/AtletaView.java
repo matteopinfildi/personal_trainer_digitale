@@ -1,8 +1,15 @@
 package model.view;
 
+import model.domain.*;
+
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class AtletaView {
+
+    private static final Scanner scanner = new Scanner(System.in);
 
     private AtletaView() {}
 
@@ -31,23 +38,68 @@ public class AtletaView {
         return op;
     }
 
-    public static String getCFAtleta() throws IOException {
+    public static Interagisce getDatiCompletamento() {
+        System.out.print("Inserisci CF Atleta: ");
+        String cfAtleta = scanner.nextLine();
+
+        System.out.print("Inserisci codice esercizio: ");
+        int codiceEs = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Inserisci data allenamento (YYYY-MM-DD): ");
+        LocalDate data = LocalDate.parse(scanner.nextLine());
+
+        Atleta atleta = new Atleta(cfAtleta);
+        Esercizio esercizio = new Esercizio(codiceEs);
+        SessioneAllenamento sessione = new SessioneAllenamento(atleta, data);
+
+        return new Interagisce(atleta, sessione, esercizio, false, true);
+    }
+
+    public static Interagisce getDatiSaltato() {
         System.out.print("Inserisci il codice fiscale dell'atleta: ");
-        return LoginView.reader.readLine();
-    }
+        String cfAtleta = scanner.next();
 
-    public static String getData() throws IOException {
-        System.out.print("Inserisci la data (YYYY-MM-DD): ");
-        return LoginView.reader.readLine();
-    }
-
-    public static int getCodiceEsercizio() throws IOException {
         System.out.print("Inserisci il codice dell'esercizio: ");
-        return Integer.parseInt(LoginView.reader.readLine());
+        int codiceEs = scanner.nextInt();
+
+        System.out.print("Inserisci la data dell'allenamento (yyyy-mm-dd): ");
+        String dataAll = scanner.next();
+
+
+        LocalDate dataAllenamento = LocalDate.parse(dataAll, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        // Creazione di oggetti per SessioneAllenamento, Atleta, Esercizio (usati nell'esempio)
+        Atleta atleta = new Atleta(cfAtleta);
+        SessioneAllenamento sessione = new SessioneAllenamento(atleta, dataAllenamento);
+        Esercizio esercizio = new Esercizio(codiceEs);
+
+        return new Interagisce(atleta, sessione, esercizio, true, false);  // Saltato=true, Contrassegnato=false
     }
 
-    public static int getDurata() throws IOException {
-        System.out.print("Inserisci la durata dell'allenamento (minuti): ");
-        return Integer.parseInt(LoginView.reader.readLine());
+    public static String getCfAtleta() {
+        System.out.print("Inserisci il codice fiscale dell'atleta: ");
+        return scanner.next();
     }
+
+    public static LocalDate getDataAllenamento() {
+        System.out.print("Inserisci la data dell'allenamento (yyyy-mm-dd): ");
+        String dataAll = scanner.next();
+        return LocalDate.parse(dataAll, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static int getDurataAllenamento() {
+        System.out.print("Inserisci la durata dell'allenamento (in minuti): ");
+        return scanner.nextInt();
+    }
+
+    public static int getCodiceEsercizio() {
+        System.out.print("Inserisci il codice dell'esercizio: ");
+        return scanner.nextInt();
+    }
+
+
+    public static void showOutput(String msg) {
+        System.out.println(msg);
+    }
+
 }

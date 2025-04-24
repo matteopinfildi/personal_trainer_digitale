@@ -1,55 +1,75 @@
 package model.view;
 
+import model.domain.Esercizio;
+import model.domain.Macchinario;
+import model.view.LoginView;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 public class GestoreView {
 
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner input = new Scanner(System.in);
 
-    public static int getOp() {
+    private GestoreView() {
+    }
+
+    public static int getOp() throws IOException {
         System.out.println("**************************");
-        System.out.println("*  GESTORE  *");
+        System.out.println("*        GESTORE         *");
         System.out.println("**************************\n");
-        System.out.println("Puoi eseguire queste operazioni:");
-        System.out.println("1) Aggiornare esercizio");
-        System.out.println("2) Aggiornare macchinario");
-        System.out.println("3) Eliminare esercizio");
-        System.out.println("4) Eliminare macchinario");
+        System.out.println("1) Inserisci un nuovo esercizio");
+        System.out.println("2) Elimina un esercizio esistente");
+        System.out.println("3) Inserisci un nuovo macchinario");
+        System.out.println("4) Elimina un macchinario esistente");
         System.out.println("5) Esci");
-        return Integer.parseInt(scanner.nextLine());
+
+        int op;
+
+        while (true) {
+            System.out.print("Scegli una operazione: ");
+            try {
+                op = Integer.parseInt(LoginView.reader.readLine());
+                if (op >= 1 && op <= 3) break;
+                System.out.println("Numero non valido.");
+            } catch (NumberFormatException e) {
+                System.out.println("Inserisci un numero valido.");
+            }
+        }
+
+        return op;
+    }
+
+    public static Esercizio getEsercizio() {
+        System.out.print("Nome: ");
+        String nome = input.nextLine();
+        System.out.print("Descrizione: ");
+        String descrizione = input.nextLine();
+        System.out.print("Numero serie: ");
+        int numSerie = Integer.parseInt(input.nextLine());
+        System.out.print("Ripetizioni: ");
+        int ripetizioni = Integer.parseInt(input.nextLine());
+
+        return new Esercizio(0, nome, descrizione, numSerie, ripetizioni);
     }
 
     public static int getCodiceEsercizio() {
-        System.out.print("Inserisci codice esercizio: ");
-        return Integer.parseInt(scanner.nextLine());
-    }
-
-    public static String getNomeEsercizio() {
-        System.out.print("Inserisci nome esercizio: ");
-        return scanner.nextLine();
-    }
-
-    public static String getDescrizioneEsercizio() {
-        System.out.print("Inserisci descrizione esercizio: ");
-        return scanner.nextLine();
-    }
-
-    public static int getNumSerie() {
-        System.out.print("Inserisci il numero di serie per l'esercizio: ");
-        return Integer.parseInt(scanner.nextLine());
-    }
-    public static int getRipetizioni() {
-        System.out.print("Inserisci il numero di ripetizioni per l'esercizio: ");
-        return Integer.parseInt(scanner.nextLine());
+        System.out.print("Inserisci il codice dell'esercizio da eliminare: ");
+        return Integer.parseInt(input.nextLine());
     }
 
     public static String getNomeMacchinario() {
-        System.out.print("Inserisci nome macchinario: ");
-        return scanner.nextLine();
+        System.out.print("Inserisci il nome del macchinario: ");
+        return input.nextLine();
     }
 
     public static String getDescrizioneMacchinario() {
-        System.out.print("Inserisci descrizione macchinario: ");
-        return scanner.nextLine();
+        System.out.print("Inserisci la descrizione del macchinario: ");
+        return input.nextLine();
+    }
+
+    public static void showOutput(String message) {
+        System.out.println(message);
     }
 }
+

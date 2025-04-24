@@ -20,6 +20,7 @@ public class SchedaAllenamento {
         this.cfPersonal = cfPersonal;
     }
 
+
     public int getIdScheda() {
         return idScheda;
     }
