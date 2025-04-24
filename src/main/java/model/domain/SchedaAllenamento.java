@@ -3,28 +3,29 @@ package model.domain;
 import java.time.LocalDate;
 
 public class SchedaAllenamento {
-    private int idScheda;
-    private Atleta atleta;
-    private String descrizione;
-    private boolean stato;
-    private LocalDate dataArchiviazione;
-    private PersonalTrainer personalTrainer;
 
-    public SchedaAllenamento(int idScheda, Atleta atleta, String descrizione, boolean stato, LocalDate dataArchiviazione, PersonalTrainer personalTrainer) {
+    private final int idScheda;
+    private final String cfAtleta;
+    private final String descrizione;
+    private final boolean stato;
+    private final LocalDate dataArchiviazione;
+    private final String cfPersonal;
+
+    public SchedaAllenamento(int idScheda, String cfAtleta, String descrizione, boolean stato, LocalDate dataArchiviazione, String cfPersonal) {
         this.idScheda = idScheda;
-        this.atleta = atleta;
+        this.cfAtleta = cfAtleta;
         this.descrizione = descrizione;
         this.stato = stato;
         this.dataArchiviazione = dataArchiviazione;
-        this.personalTrainer = personalTrainer;
+        this.cfPersonal = cfPersonal;
     }
 
     public int getIdScheda() {
         return idScheda;
     }
 
-    public Atleta getAtleta() {
-        return atleta;
+    public String getCfAtleta() {
+        return cfAtleta;
     }
 
     public String getDescrizione() {
@@ -39,19 +40,20 @@ public class SchedaAllenamento {
         return dataArchiviazione;
     }
 
-    public PersonalTrainer getPersonalTrainer() {
-        return personalTrainer;
+    public String getCfPersonal() {
+        return cfPersonal;
     }
 
     @Override
     public String toString() {
         return "SchedaAllenamento{" +
                 "idScheda=" + idScheda +
-                ", atleta=" + atleta.getCfAtleta() +
+                ", cfAtleta='" + cfAtleta + '\'' +
                 ", descrizione='" + descrizione + '\'' +
                 ", stato=" + stato +
-                ", dataArchiviazione=" + (dataArchiviazione != null ? dataArchiviazione : "N/A") +
-                ", personalTrainer=" + personalTrainer.getCfPersonal() +
+                ", dataArchiviazione=" + dataArchiviazione +
+                ", cfPersonal='" + cfPersonal + '\'' +
                 '}';
     }
 }
+

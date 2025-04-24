@@ -1110,7 +1110,6 @@ GRANT EXECUTE ON procedure `personal_trainer_digitale`.`assegna_personal` TO 'pe
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`creazione_scheda_attiva` TO 'personalUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`associa_esercizio_scheda` TO 'personalUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`archivia_scheda_attiva` TO 'personalUser';
-GRANT EXECUTE ON procedure `personal_trainer_digitale`.`modifica_personal` TO 'personalUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`genera_report` TO 'personalUser';
 SET SQL_MODE = '';
 
