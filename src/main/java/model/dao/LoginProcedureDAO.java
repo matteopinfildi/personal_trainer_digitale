@@ -9,9 +9,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class LoginProcedureDAO {
-    public Credentials logIn(String username, String password) throws DAOException {
-        String codiceFiscale;
+public class LoginProcedureDAO{
+
+    public Credentials logIn(String username, String password) throws DAOException{
         int role;
 
         try{
@@ -29,3 +29,4 @@ public class LoginProcedureDAO {
         return new Credentials(username, password, Role.fromInt(role));
     }
 }
+

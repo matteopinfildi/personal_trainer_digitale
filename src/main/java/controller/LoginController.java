@@ -10,6 +10,7 @@ import model.view.LoginView;
 import java.io.IOException;
 
 public class LoginController implements Controller{
+
     private Credentials credentials;
     @Override
     public void start(){

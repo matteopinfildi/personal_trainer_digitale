@@ -8,13 +8,13 @@ import java.time.LocalDate;
 
 public class SchedaAllenamentoDAO {
     public void creazioneSchedaAttiva(SchedaAllenamento scheda) throws DAOException {
-        String sql = "{CALL crea_scheda_attiva(?, ?, ?, ?, ?)}";  // Ho aggiunto 1 parametro in più, se necessario
+        String sql = "{CALL creazione_scheda_attiva(?, ?, ?, ?, ?)}";  // Ho aggiunto 1 parametro in più, se necessario
         try (Connection conn = ConnectionFactory.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.setString(1, scheda.getCfAtleta());  // cfAtleta
             stmt.setString(2, scheda.getDescrizione());  // descrizione
-            stmt.setDate(3, java.sql.Date.valueOf(scheda.getDataArchiviazione()));  // dataArchiviazione
+            stmt.setNull(3, java.sql.Types.DATE);  // dataArchiviazione
             stmt.setString(4, scheda.getCfPersonal());  // cfPersonal
             stmt.setBoolean(5, scheda.isStato());  // stato (booleano, gestito con setBoolean)
 
