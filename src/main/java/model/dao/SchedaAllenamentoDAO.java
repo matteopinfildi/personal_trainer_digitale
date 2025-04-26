@@ -8,15 +8,16 @@ import java.time.LocalDate;
 
 public class SchedaAllenamentoDAO {
     public void creazioneSchedaAttiva(SchedaAllenamento scheda) throws DAOException {
-        String sql = "{CALL creazione_scheda_attiva(?, ?, ?, ?, ?)}";  // Ho aggiunto 1 parametro in più, se necessario
+        String sql = "{CALL creazione_scheda_attiva(?, ?, ?)}";  // Ho aggiunto 1 parametro in più, se necessario
         try (Connection conn = ConnectionFactory.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            stmt.setString(1, scheda.getCfAtleta());  // cfAtleta
-            stmt.setString(2, scheda.getDescrizione());  // descrizione
-            stmt.setNull(3, java.sql.Types.DATE);  // dataArchiviazione
-            stmt.setString(4, scheda.getCfPersonal());  // cfPersonal
-            stmt.setBoolean(5, scheda.isStato());  // stato (booleano, gestito con setBoolean)
+            stmt.setString(1, scheda.getCfPersonal());
+            stmt.setString(2, scheda.getCfAtleta());  // cfAtleta
+            stmt.setString(3, scheda.getDescrizione());  // descrizione
+//            stmt.setNull(3, java.sql.Types.DATE);  // dataArchiviazione
+            // cfPersonal
+//            stmt.setBoolean(5, scheda.isStato());  // stato (booleano, gestito con setBoolean)
 
             stmt.execute();
         } catch (SQLException e) {
@@ -52,10 +53,9 @@ public class SchedaAllenamentoDAO {
                     String cfAtletaResult = rs.getString("cf_atleta");
                     String descrizione = rs.getString("descrizione");
                     boolean stato = rs.getInt("stato") == 1;  // Convertiamo 1/0 in boolean
-                    LocalDate dataArchiviazione = rs.getDate("data_archiviazione").toLocalDate();
                     String cfPersonal = rs.getString("cf_personal");
 
-                    return new SchedaAllenamento(idScheda, cfAtletaResult, descrizione, stato, dataArchiviazione, cfPersonal);
+                    return new SchedaAllenamento(idScheda, cfPersonal, cfAtletaResult, descrizione, stato, null);
                 } else {
                     throw new DAOException("Nessuna scheda attiva trovata per l'atleta");
                 }
@@ -77,11 +77,11 @@ public class SchedaAllenamentoDAO {
             if (rs.next()) {
                 return new SchedaAllenamento(
                         rs.getInt("id_scheda"),
+                        null,
                         rs.getString("cf_atleta"),
                         rs.getString("descrizione"),
                         false, // stato archiviato è 0
-                        rs.getDate("data_archiviazione").toLocalDate(),
-                        null // Nessun cf_personal per le schede archiviate
+                        rs.getDate("data_archiviazione").toLocalDate()
                 );
             } else {
                 throw new DAOException("Nessuna scheda archiviata trovata per l'atleta con CF: " + cfAtleta);

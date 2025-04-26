@@ -1134,6 +1134,7 @@ GRANT EXECUTE ON procedure `personal_trainer_digitale`.`visualizza_scheda_attiva
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`visualizza_scheda_archiviata` TO 'atletaUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`registrazione_allenamento` TO 'atletaUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`stampa_esercizio` TO 'atletaUser';
+GRANT SELECT ON personal_trainer_digitale.scheda_allenamento TO 'atletaUser';
 SET SQL_MODE = '';
 
 DROP USER IF EXISTS personalUser;
@@ -1147,6 +1148,8 @@ GRANT EXECUTE ON procedure `personal_trainer_digitale`.`archivia_scheda_attiva` 
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`genera_report` TO 'personalUser';
 GRANT UPDATE ON personal_trainer_digitale.atleta TO 'personalUser';
 GRANT SELECT ON personal_trainer_digitale.atleta TO 'personalUser';
+GRANT SELECT ON personal_trainer_digitale.esercizi TO 'personalUser';
+GRANT SELECT ON personal_trainer_digitale.scheda_allenamento TO 'personalUser';
 SET SQL_MODE = '';
 
 DROP USER IF EXISTS gestoreUser;
@@ -1177,7 +1180,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `personal_trainer_digitale`;
-INSERT INTO `personal_trainer_digitale`.`atleta` (`cf_atleta`, `nome`, `cognome`, `data_nascita`, `cf_personal`) VALUES ('1234567890123456', 'Matteo', 'Pinfildi', '2003-02-15', null);
+INSERT INTO `personal_trainer_digitale`.`atleta` (`cf_atleta`, `nome`, `cognome`, `data_nascita`, `cf_personal`) VALUES ('1234567890123456', 'Matteo', 'Pinfildi', '2003-02-15', 'aaaabbbbccccdddd');
 
 COMMIT;
 

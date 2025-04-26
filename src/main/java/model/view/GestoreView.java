@@ -1,8 +1,6 @@
 package model.view;
 
 import model.domain.Esercizio;
-import model.domain.Macchinario;
-import model.view.LoginView;
 
 import java.io.IOException;
 import java.util.Scanner;

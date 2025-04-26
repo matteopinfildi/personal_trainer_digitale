@@ -11,7 +11,7 @@ public class SchedaAllenamento {
     private final LocalDate dataArchiviazione;
     private final String cfPersonal;
 
-    public SchedaAllenamento(int idScheda, String cfAtleta, String descrizione, boolean stato, LocalDate dataArchiviazione, String cfPersonal) {
+    public SchedaAllenamento(int idScheda,  String cfPersonal, String cfAtleta, String descrizione, boolean stato, LocalDate dataArchiviazione) {
         this.idScheda = idScheda;
         this.cfAtleta = cfAtleta;
         this.descrizione = descrizione;

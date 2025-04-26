@@ -56,16 +56,17 @@ public class PersonalTrainerView {
     }
 
     public static SchedaAllenamento getScheda() {
+        System.out.print("Codice fiscale del personal trainer: ");
+        String cfPersonal = input.nextLine();
+
         System.out.print("Codice fiscale dell'atleta: ");
         String cfAtleta = input.nextLine();
 
         System.out.print("Descrizione della scheda: ");
         String descrizione = input.nextLine();
 
-        System.out.print("Codice fiscale del personal trainer: ");
-        String cfPersonal = input.nextLine();
 
-        return new SchedaAllenamento(0, cfAtleta, descrizione, true, null, cfPersonal);
+        return new SchedaAllenamento(0, cfPersonal, cfAtleta, descrizione, true, null);
     }
 
     public static int getCodiceEsercizio() {
