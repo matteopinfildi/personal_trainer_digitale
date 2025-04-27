@@ -5,6 +5,8 @@ import model.domain.SchedaAllenamento;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SchedaAllenamentoDAO {
     public void creazioneSchedaAttiva(SchedaAllenamento scheda) throws DAOException {
@@ -63,10 +65,13 @@ public class SchedaAllenamentoDAO {
         }
     }
 
-    public SchedaAllenamento visualizzaSchedaArchiviata(String cfAtleta) throws DAOException, SQLException {
+    public List<SchedaAllenamento> visualizzaSchedaArchiviata(String cfAtleta) throws DAOException, SQLException {
         String sql = "SELECT id_scheda, descrizione, data_archiviazione, cf_atleta " +
                 "FROM scheda_allenamento " +
                 "WHERE cf_atleta = ? AND stato = 0";
+
+
+        List<SchedaAllenamento> schedeArchiviate = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -74,8 +79,8 @@ public class SchedaAllenamentoDAO {
             ps.setString(1, cfAtleta);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                return new SchedaAllenamento(
+            while (rs.next()) {
+                 SchedaAllenamento scheda = new SchedaAllenamento(
                         rs.getInt("id_scheda"),
                         null,
                         rs.getString("cf_atleta"),
@@ -83,9 +88,13 @@ public class SchedaAllenamentoDAO {
                         false, // stato archiviato è 0
                         rs.getDate("data_archiviazione").toLocalDate()
                 );
-            } else {
+                schedeArchiviate.add(scheda);
+            }
+            if (schedeArchiviate.isEmpty()) {
                 throw new DAOException("Nessuna scheda archiviata trovata per l'atleta con CF: " + cfAtleta);
             }
+            return schedeArchiviate;
+
         } catch (SQLException e) {
             throw new SQLException("Errore durante la visualizzazione della scheda archiviata", e);
         }

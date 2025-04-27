@@ -614,12 +614,12 @@ BEGIN
     END IF;
 
     IF EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`interagisce`
-               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento` AND `codice_es` = var_codice_es AND `saltato` = 1) THEN
+               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento`= var_data_allenamento AND `codice_es` = var_codice_es AND `saltato` = 1) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio è già stato saltato';
     END IF;
 
     IF EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`interagisce`
-               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento` AND `codice_es` = var_codice_es AND `contrassegnato` = 1) THEN
+               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento`= var_data_allenamento AND `codice_es` = var_codice_es AND `contrassegnato` = 1) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio è già stato completato';
     END IF;
 

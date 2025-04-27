@@ -48,7 +48,7 @@ public class InterazioneDAO {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DAOException("Errore nell'esecuzione della procedura esercizio_saltato");
+            throw new DAOException("Errore nell'esecuzione della procedura esercizio_saltato" + e.getMessage());
         } finally {
             try {
                 if (statement != null) {

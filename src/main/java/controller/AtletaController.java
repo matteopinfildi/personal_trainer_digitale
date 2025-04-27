@@ -8,6 +8,7 @@ import model.view.AtletaView;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class AtletaController implements Controller {
 
@@ -80,12 +81,15 @@ public class AtletaController implements Controller {
             // Ottieni il codice fiscale dell'atleta dalla view
             String cfAtleta = AtletaView.getCfAtleta(); // Aggiunta la chiamata per ottenere il codice fiscale
 
-            // Recupera la scheda archiviata per l'atleta
-            SchedaAllenamento scheda = schedaDAO.visualizzaSchedaArchiviata(cfAtleta);
 
-            // Mostra la scheda archiviata
-            AtletaView.showOutput("Scheda archiviata: " + scheda.getDescrizione() +
-                    " - Data Archiviazione: " + scheda.getDataArchiviazione());
+            List<SchedaAllenamento> scheda = schedaDAO.visualizzaSchedaArchiviata(cfAtleta);
+
+            for (SchedaAllenamento schedaAllenamento : scheda) {
+                AtletaView.showOutput(
+                        "Scheda archiviata: " + schedaAllenamento.getDescrizione() +
+                                " - Data Archiviazione: " + schedaAllenamento.getDataArchiviazione()
+                );
+            }
         } catch (DAOException e) {
             AtletaView.showOutput("Errore: " + e.getMessage());
         } catch (SQLException e) {
