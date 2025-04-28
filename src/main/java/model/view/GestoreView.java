@@ -28,7 +28,7 @@ public class GestoreView {
             System.out.print("Scegli una operazione: ");
             try {
                 op = Integer.parseInt(LoginView.reader.readLine());
-                if (op >= 1 && op <= 3) break;
+                if (op >= 1 && op <= 5) break;
                 System.out.println("Numero non valido.");
             } catch (NumberFormatException e) {
                 System.out.println("Inserisci un numero valido.");
@@ -52,7 +52,7 @@ public class GestoreView {
     }
 
     public static int getCodiceEsercizio() {
-        System.out.print("Inserisci il codice dell'esercizio da eliminare: ");
+        System.out.print("Inserisci il codice dell'esercizio: ");
         return Integer.parseInt(input.nextLine());
     }
 

@@ -8,13 +8,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 public class MacchinarioDAO {
-    private Connection conn;
 
     public void aggiungiMacchinario(Macchinario macchinario) throws DAOException {
+        String sql = "{CALL aggiorna_macchinari(?, ?, ?)}";
         try (Connection conn = ConnectionFactory.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call aggiorna_macchinari(?, ?, ?)}")) {
+             CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.setInt(1, macchinario.getEsercizio().getCodiceEs());
             stmt.setString(2, macchinario.getNome());
@@ -27,15 +26,15 @@ public class MacchinarioDAO {
     }
 
     public void eliminaMacchinario(String nomeMacchinario) throws DAOException {
-        String sql = "CALL elimina_macchinario(?)";
+        String sql = "{CALL elimina_macchinario(?)}";
+        try (Connection conn = ConnectionFactory.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nomeMacchinario);
+            stmt.setString(1, nomeMacchinario);
 
-            // Esegui la chiamata alla stored procedure
-            ps.executeUpdate();
+            stmt.execute();
         } catch (SQLException e) {
-            throw new DAOException("Errore durante l'eliminazione del macchinario");
+            throw new DAOException("Errore durante l'eliminazione del macchinario: " + e.getMessage());
         }
     }
 }

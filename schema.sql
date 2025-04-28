@@ -1160,6 +1160,7 @@ GRANT EXECUTE ON procedure `personal_trainer_digitale`.`aggiorna_esercizi` TO 'g
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`aggiorna_macchinari` TO 'gestoreUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`elimina_esercizio` TO 'gestoreUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`elimina_macchinario` TO 'gestoreUser';
+GRANT SELECT ON personal_trainer_digitale.esercizi TO 'gestoreUser';
 SET SQL_MODE = '';
 
 SET SQL_MODE=@OLD_SQL_MODE;

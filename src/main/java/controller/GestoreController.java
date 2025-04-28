@@ -54,26 +54,21 @@ public class GestoreController implements Controller {
 
     private void aggiungiMacchinario() {
         try {
-            // Ottieni il codice dell'esercizio dalla view
+            // Ottieni solo il codice (senza creare l'oggetto Esercizio completo)
             int codiceEs = GestoreView.getCodiceEsercizio();
-            EserciziDAO eserciziDAO = new EserciziDAO();
-            // Recupera l'esercizio dal database
-            Esercizio esercizio = eserciziDAO.getEsercizioByCodice(codiceEs);
 
-            // Ottieni le informazioni sul macchinario dalla view
+            // Ottieni i dati del macchinario
             String nome = GestoreView.getNomeMacchinario();
             String descrizione = GestoreView.getDescrizioneMacchinario();
 
-            // Crea un oggetto Macchinario
-            Macchinario macchinario = new Macchinario(esercizio, nome, descrizione);
+            // Crea un Esercizio "light" con solo il codice
+            Esercizio esercizio = new Esercizio(codiceEs);
 
-            // Crea un'istanza della DAO e inserisci il macchinario
+            Macchinario macchinario = new Macchinario(esercizio, nome, descrizione);
             MacchinarioDAO macchinarioDAO = new MacchinarioDAO();
             macchinarioDAO.aggiungiMacchinario(macchinario);
 
-            // Mostra messaggio di successo
             GestoreView.showOutput("Macchinario aggiunto correttamente!");
-
         } catch (DAOException e) {
             GestoreView.showOutput("Errore nell'aggiungere il macchinario: " + e.getMessage());
         }
