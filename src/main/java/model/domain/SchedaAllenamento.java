@@ -1,6 +1,8 @@
 package model.domain;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 public class SchedaAllenamento {
 
@@ -10,14 +12,16 @@ public class SchedaAllenamento {
     private final boolean stato;
     private final LocalDate dataArchiviazione;
     private final String cfPersonal;
+    private final List<Esercizio> esercizi;
 
-    public SchedaAllenamento(int idScheda,  String cfPersonal, String cfAtleta, String descrizione, boolean stato, LocalDate dataArchiviazione) {
+    public SchedaAllenamento(int idScheda,  String cfPersonal, String cfAtleta, String descrizione, boolean stato, LocalDate dataArchiviazione, List<Esercizio> esercizi) {
         this.idScheda = idScheda;
         this.cfAtleta = cfAtleta;
         this.descrizione = descrizione;
         this.stato = stato;
         this.dataArchiviazione = dataArchiviazione;
         this.cfPersonal = cfPersonal;
+        this.esercizi = esercizi != null ? Collections.unmodifiableList(esercizi) : Collections.emptyList();
     }
 
 
@@ -33,7 +37,7 @@ public class SchedaAllenamento {
         return descrizione;
     }
 
-    public boolean isStato() {
+    public boolean isStato(){
         return stato;
     }
 
@@ -43,6 +47,10 @@ public class SchedaAllenamento {
 
     public String getCfPersonal() {
         return cfPersonal;
+    }
+
+    public List<Esercizio> getEsercizi() {
+        return esercizi;
     }
 
     @Override

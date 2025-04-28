@@ -5,6 +5,7 @@ import model.domain.SchedaAllenamento;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -66,7 +67,7 @@ public class PersonalTrainerView {
         String descrizione = input.nextLine();
 
 
-        return new SchedaAllenamento(0, cfPersonal, cfAtleta, descrizione, true, null);
+        return new SchedaAllenamento(0, cfPersonal, cfAtleta, descrizione, true, null, new ArrayList<>());
     }
 
     public static int getCodiceEsercizio() {

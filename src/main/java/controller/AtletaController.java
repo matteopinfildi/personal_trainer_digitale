@@ -67,8 +67,22 @@ public class AtletaController implements Controller {
         try {
             String cfAtleta = AtletaView.getCfAtleta();
             SchedaAllenamento scheda = schedaDAO.visualizzaSchedaAttiva(cfAtleta);
-            AtletaView.showOutput("Scheda attiva: " + scheda.getDescrizione() +
-                    " - Personal Trainer: " + scheda.getCfPersonal());
+            StringBuilder output = new StringBuilder();
+            output.append("=== SCHEDA ATTIVA ===\n")
+                    .append("Descrizione: ").append(scheda.getDescrizione()).append("\n")
+                    .append("Personal Trainer: ").append(scheda.getCfPersonal()).append("\n")
+                    .append("Esercizi:\n");
+
+            // Aggiungiamo ogni esercizio con serie e ripetizioni
+            for (Esercizio esercizio : scheda.getEsercizi()) {
+                output.append("- ").append(esercizio.getNome())
+                        .append(": ").append(esercizio.getNumSerie())
+                        .append(" serie x ").append(esercizio.getRipetizioni())
+                        .append(" ripetizioni\n");
+            }
+
+            AtletaView.showOutput(output.toString());
+
         } catch (DAOException e) {
             AtletaView.showOutput("Errore: " + e.getMessage());
         } catch (SQLException e) {
@@ -82,14 +96,32 @@ public class AtletaController implements Controller {
             String cfAtleta = AtletaView.getCfAtleta(); // Aggiunta la chiamata per ottenere il codice fiscale
 
 
-            List<SchedaAllenamento> scheda = schedaDAO.visualizzaSchedaArchiviata(cfAtleta);
+            List<SchedaAllenamento> schede = schedaDAO.visualizzaSchedaArchiviata(cfAtleta);
 
-            for (SchedaAllenamento schedaAllenamento : scheda) {
-                AtletaView.showOutput(
-                        "Scheda archiviata: " + schedaAllenamento.getDescrizione() +
-                                " - Data Archiviazione: " + schedaAllenamento.getDataArchiviazione()
-                );
+
+            if (schede.isEmpty()) {
+                AtletaView.showOutput("Nessuna scheda archiviata trovata");
+                return;
             }
+
+            StringBuilder output = new StringBuilder();
+
+            for (SchedaAllenamento scheda : schede) {
+                output.append("\n=== SCHEDA ARCHIVIATA ===\n")
+                        .append("Descrizione: ").append(scheda.getDescrizione()).append("\n")
+                        .append("Data archiviazione: ").append(scheda.getDataArchiviazione()).append("\n")
+                        .append("Esercizi:\n");
+
+                for (Esercizio esercizio : scheda.getEsercizi()) {
+                    output.append("- ").append(esercizio.getNome()).append(":\n")
+                            .append("  Serie: ").append(esercizio.getNumSerie()).append(" x ")
+                            .append(esercizio.getRipetizioni()).append(" ripetizioni\n")
+                            .append("  Descrizione: ").append(esercizio.getDescrizione()).append("\n\n");
+                }
+            }
+
+            AtletaView.showOutput(output.toString());
+
         } catch (DAOException e) {
             AtletaView.showOutput("Errore: " + e.getMessage());
         } catch (SQLException e) {

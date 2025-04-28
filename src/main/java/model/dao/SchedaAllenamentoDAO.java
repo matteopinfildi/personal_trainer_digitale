@@ -1,10 +1,10 @@
 package model.dao;
 
 import exception.DAOException;
+import model.domain.Esercizio;
 import model.domain.SchedaAllenamento;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +17,6 @@ public class SchedaAllenamentoDAO {
             stmt.setString(1, scheda.getCfPersonal());
             stmt.setString(2, scheda.getCfAtleta());  // cfAtleta
             stmt.setString(3, scheda.getDescrizione());  // descrizione
-//            stmt.setNull(3, java.sql.Types.DATE);  // dataArchiviazione
-            // cfPersonal
-//            stmt.setBoolean(5, scheda.isStato());  // stato (booleano, gestito con setBoolean)
 
             stmt.execute();
         } catch (SQLException e) {
@@ -41,62 +38,121 @@ public class SchedaAllenamentoDAO {
     }
 
     public SchedaAllenamento visualizzaSchedaAttiva(String cfAtleta) throws DAOException, SQLException {
-        String query = "SELECT id_scheda, cf_atleta, descrizione, stato, data_archiviazione, cf_personal " +
-                "FROM personal_trainer_digitale.scheda_allenamento " +
-                "WHERE cf_atleta = ? AND stato = 1 LIMIT 1";
+        String query = "{CALL visualizza_scheda_attiva(?)}";
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+             CallableStatement stmt = connection.prepareCall(query)) {
 
             stmt.setString(1, cfAtleta);
+            ResultSet rs = stmt.executeQuery();
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int idScheda = rs.getInt("id_scheda");
-                    String cfAtletaResult = rs.getString("cf_atleta");
-                    String descrizione = rs.getString("descrizione");
-                    boolean stato = rs.getInt("stato") == 1;  // Convertiamo 1/0 in boolean
-                    String cfPersonal = rs.getString("cf_personal");
+            SchedaAllenamento scheda = null;
+            List<Esercizio> esercizi = new ArrayList<>();
 
-                    return new SchedaAllenamento(idScheda, cfPersonal, cfAtletaResult, descrizione, stato, null);
-                } else {
-                    throw new DAOException("Nessuna scheda attiva trovata per l'atleta");
+            while (rs.next()) {
+                if (scheda == null) {
+                    scheda = new SchedaAllenamento(
+                            rs.getInt("id_scheda"),
+                            rs.getString("cf_personal"),
+                            cfAtleta,
+                            rs.getString("descrizione_scheda"),
+                            true,
+                            null,
+                            new ArrayList<>()
+                    );
                 }
+
+                esercizi.add(new Esercizio(
+                        rs.getInt("codice_es"),
+                        rs.getString("nome_esercizio"),
+                        null,
+                        rs.getInt("num_serie"),
+                        rs.getInt("ripetizioni")
+                ));
             }
+            if (scheda == null) {
+                throw new DAOException("Nessuna scheda attiva trovata per l'atleta");
+            }
+
+            return new SchedaAllenamento(
+                    scheda.getIdScheda(),
+                    scheda.getCfPersonal(),
+                    scheda.getCfAtleta(),
+                    scheda.getDescrizione(),
+                    scheda.isStato(),
+                    scheda.getDataArchiviazione(),
+                    esercizi
+            );
         }
     }
 
     public List<SchedaAllenamento> visualizzaSchedaArchiviata(String cfAtleta) throws DAOException, SQLException {
-        String sql = "SELECT id_scheda, descrizione, data_archiviazione, cf_atleta " +
-                "FROM scheda_allenamento " +
-                "WHERE cf_atleta = ? AND stato = 0";
-
-
+        String query = "{CALL visualizza_scheda_archiviata(?)}";
         List<SchedaAllenamento> schedeArchiviate = new ArrayList<>();
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = ConnectionFactory.getConnection();
+             CallableStatement stmt = connection.prepareCall(query)) {
 
-            ps.setString(1, cfAtleta);
-            ResultSet rs = ps.executeQuery();
+            stmt.setString(1, cfAtleta);
+            ResultSet rs = stmt.executeQuery();
+
+            SchedaAllenamento currentScheda = null;
+            List<Esercizio> currentEsercizi = new ArrayList<>();
+            int currentIdScheda = -1;
 
             while (rs.next()) {
-                 SchedaAllenamento scheda = new SchedaAllenamento(
-                        rs.getInt("id_scheda"),
-                        null,
-                        rs.getString("cf_atleta"),
-                        rs.getString("descrizione"),
-                        false, // stato archiviato è 0
-                        rs.getDate("data_archiviazione").toLocalDate()
-                );
-                schedeArchiviate.add(scheda);
+                int idScheda = rs.getInt("id_scheda");
+
+                if (idScheda != currentIdScheda) {
+                    if (currentScheda != null) {
+                        schedeArchiviate.add(new SchedaAllenamento(
+                                currentScheda.getIdScheda(),
+                                null,
+                                currentScheda.getCfAtleta(),
+                                currentScheda.getDescrizione(),
+                                false,
+                                currentScheda.getDataArchiviazione(),
+                                currentEsercizi
+                        ));
+                        currentEsercizi = new ArrayList<>();
+                    }
+
+                    currentScheda = new SchedaAllenamento(
+                            idScheda,
+                            null,
+                            cfAtleta,
+                            rs.getString("descrizione_scheda"),
+                            false,
+                            rs.getDate("data_archiviazione").toLocalDate(),
+                            null
+                    );
+                    currentIdScheda = idScheda;
+                }
+
+                currentEsercizi.add(new Esercizio(
+                        rs.getInt("codice_es"),
+                        rs.getString("nome_esercizio"),
+                        rs.getString("descrizione_esercizio"),
+                        rs.getInt("num_serie"),
+                        rs.getInt("ripetizioni")
+                ));
             }
+
+            if (currentScheda != null) {
+                schedeArchiviate.add(new SchedaAllenamento(
+                        currentScheda.getIdScheda(),
+                        null,
+                        currentScheda.getCfAtleta(),
+                        currentScheda.getDescrizione(),
+                        false,
+                        currentScheda.getDataArchiviazione(),
+                        currentEsercizi
+                ));
+            }
+
             if (schedeArchiviate.isEmpty()) {
                 throw new DAOException("Nessuna scheda archiviata trovata per l'atleta con CF: " + cfAtleta);
             }
             return schedeArchiviate;
-
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante la visualizzazione della scheda archiviata", e);
         }
     }
 }

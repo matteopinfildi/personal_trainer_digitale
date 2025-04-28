@@ -876,14 +876,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `visualizza_scheda_archiviata`(in va
 BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-		ROLLBACK;
+        ROLLBACK;
         RESIGNAL;
-	END;
+    END;
 
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     SET TRANSACTION READ ONLY;
 
-    IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.atleta WHERE cf_atleta = var_cf_atleta) THEN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM personal_trainer_digitale.atleta
+        WHERE cf_atleta = var_cf_atleta
+    ) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
 
@@ -899,12 +903,25 @@ BEGIN
     START TRANSACTION;
 
     SELECT
-        id_scheda,
-        descrizione,
-        data_archiviazione,
-        cf_atleta
-    FROM personal_trainer_digitale.scheda_allenamento
-    WHERE cf_atleta = var_cf_atleta AND stato = 0;
+        sa.id_scheda,
+        sa.descrizione AS descrizione_scheda,
+        sa.data_archiviazione,
+        e.codice_es,
+        e.nome AS nome_esercizio,
+        e.descrizione AS descrizione_esercizio,
+        e.num_serie,
+        e.ripetizioni
+    FROM
+        personal_trainer_digitale.scheda_allenamento sa
+    LEFT JOIN
+        personal_trainer_digitale.contenuto c ON sa.id_scheda = c.id_scheda
+    LEFT JOIN
+        personal_trainer_digitale.esercizi e ON c.codice_es = e.codice_es
+    WHERE
+        sa.cf_atleta = var_cf_atleta
+        AND sa.stato = 0
+    ORDER BY
+        sa.id_scheda, e.nome;
 
     COMMIT;
 END$$
@@ -922,37 +939,48 @@ DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `visualizza_scheda_attiva`(in var_cf_atleta VARCHAR(16))
 BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	 DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-		ROLLBACK;
+        ROLLBACK;
         RESIGNAL;
-	END;
+    END;
 
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-	SET TRANSACTION READ ONLY;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    SET TRANSACTION READ ONLY;
 
     START TRANSACTION;
-    IF NOT EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`atleta` WHERE `cf_atleta` = var_cf_atleta) THEN
+
+    IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.atleta WHERE cf_atleta = var_cf_atleta) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
 
     IF NOT EXISTS (
         SELECT 1
-        FROM `personal_trainer_digitale`.`scheda_allenamento`
-        WHERE `cf_atleta` = var_cf_atleta AND stato = 1
-        LIMIT 1
+        FROM personal_trainer_digitale.scheda_allenamento
+        WHERE cf_atleta = var_cf_atleta AND stato = 1
     ) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Nessuna scheda attiva trovata per l\'atleta';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nessuna scheda attiva trovata per l\'atleta';
     END IF;
 
     SELECT
-        `id_scheda`,
-        `descrizione`,
-        `cf_personal`
-    FROM `personal_trainer_digitale`.`scheda_allenamento`
-    WHERE `cf_atleta` = var_cf_atleta AND stato = 1
-    LIMIT 1;
+        sa.id_scheda,
+        sa.descrizione AS descrizione_scheda,
+        sa.cf_personal,
+        e.codice_es,
+        e.nome AS nome_esercizio,
+        e.num_serie,
+        e.ripetizioni
+    FROM
+        personal_trainer_digitale.scheda_allenamento sa
+    INNER JOIN
+        personal_trainer_digitale.contenuto c ON sa.id_scheda = c.id_scheda
+    INNER JOIN
+        personal_trainer_digitale.esercizi e ON c.codice_es = e.codice_es
+    WHERE
+        sa.cf_atleta = var_cf_atleta
+        AND sa.stato = 1
+    ORDER BY
+        sa.id_scheda, e.nome;
 
     COMMIT;
 END$$
