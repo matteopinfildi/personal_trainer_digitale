@@ -4,229 +4,216 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-    -- -----------------------------------------------------
-    -- Schema mydb
-    -- -----------------------------------------------------
-    -- -----------------------------------------------------
-    -- Schema personal_trainer_digitale
-    -- -----------------------------------------------------
-
-    -- -----------------------------------------------------
-    -- Schema personal_trainer_digitale
-    -- -----------------------------------------------------
-    CREATE SCHEMA IF NOT EXISTS `personal_trainer_digitale` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-    USE `personal_trainer_digitale` ;
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`personal_trainer`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`personal_trainer` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`personal_trainer` (
-      `cf_personal` VARCHAR(16) NOT NULL,
-      `nome` VARCHAR(20) NOT NULL,
-      `cognome` VARCHAR(20) NOT NULL,
-      PRIMARY KEY (`cf_personal`),
-      UNIQUE INDEX `cf_personal_UNIQUE` (`cf_personal` ASC) VISIBLE)
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`atleta`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleta` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleta` (
-      `cf_atleta` VARCHAR(16) NOT NULL,
-      `nome` VARCHAR(20) NOT NULL,
-      `cognome` VARCHAR(20) NOT NULL,
-      `data_nascita` DATE NOT NULL,
-      `cf_personal` VARCHAR(16) NULL DEFAULT NULL,
-      PRIMARY KEY (`cf_atleta`),
-      UNIQUE INDEX `cf_atleta_UNIQUE` (`cf_atleta` ASC) VISIBLE,
-      INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
-      CONSTRAINT `cf_personal`
-        FOREIGN KEY (`cf_personal`)
-        REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`esercizi`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
-      `codice_es` INT NOT NULL AUTO_INCREMENT,
-      `nome` VARCHAR(20) NOT NULL,
-      `descrizione` TEXT NOT NULL,
-      `num_serie` INT UNSIGNED NOT NULL,
-      `ripetizioni` INT UNSIGNED NOT NULL,
-      PRIMARY KEY (`codice_es`),
-      UNIQUE INDEX `codice_es_UNIQUE` (`codice_es` ASC) VISIBLE)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 7
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`scheda_allenamento`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`scheda_allenamento` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
-      `id_scheda` INT NOT NULL AUTO_INCREMENT,
-      `cf_atleta` VARCHAR(16) NOT NULL,
-      `descrizione` TEXT NOT NULL,
-      `stato` TINYINT(1) NOT NULL,
-      `data_creazione` DATE NOT NULL,
-      `data_archiviazione` DATE NULL DEFAULT NULL,
-      `cf_personal` VARCHAR(16) NOT NULL,
-      PRIMARY KEY (`id_scheda`, `cf_atleta`),
-      UNIQUE INDEX `id_scheda_attiva_UNIQUE` (`id_scheda` ASC) VISIBLE,
-      INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
-      INDEX `cf_atleta_idx` (`cf_atleta` ASC) VISIBLE,
-      INDEX `c_f_atleta_idx` (`cf_atleta` ASC) VISIBLE,
-      CONSTRAINT `c_f_atleta`
-        FOREIGN KEY (`cf_atleta`)
-        REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`),
-      CONSTRAINT `cf_personal_trainer`
-        FOREIGN KEY (`cf_personal`)
-        REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 27
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`contenuto`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`contenuto` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`contenuto` (
-      `codice_es` INT NOT NULL,
-      `id_scheda` INT NOT NULL,
-      PRIMARY KEY (`codice_es`, `id_scheda`),
-      INDEX `id_scheda_attiva_idx` (`id_scheda` ASC) VISIBLE,
-      CONSTRAINT `codice_eser`
-        FOREIGN KEY (`codice_es`)
-        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`),
-      CONSTRAINT `id_scheda`
-        FOREIGN KEY (`id_scheda`)
-        REFERENCES `personal_trainer_digitale`.`scheda_allenamento` (`id_scheda`)
-        ON DELETE CASCADE)
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`sessione_allenamento`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`sessione_allenamento` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`sessione_allenamento` (
-      `cf_atleta` VARCHAR(16) NOT NULL,
-      `data_allenamento` DATE NOT NULL,
-      `durata` INT UNSIGNED NOT NULL,
-      PRIMARY KEY (`cf_atleta`, `data_allenamento`),
-      CONSTRAINT `codf_atleta`
-        FOREIGN KEY (`cf_atleta`)
-        REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`interagisce`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`interagisce` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`interagisce` (
-      `cf_atleta` VARCHAR(16) NOT NULL,
-      `data_allenamento` DATE NOT NULL,
-      `codice_es` INT NOT NULL,
-      `saltato` TINYINT(1) NOT NULL,
-      `contrassegnato` TINYINT(1) NOT NULL,
-      INDEX `codice_esercizio_idx` (`codice_es` ASC) VISIBLE,
-      INDEX `cfisc_atleta_idx` (`cf_atleta` ASC, `data_allenamento` ASC) VISIBLE,
-      CONSTRAINT `cfisc_atleta`
-        FOREIGN KEY (`cf_atleta` , `data_allenamento`)
-        REFERENCES `personal_trainer_digitale`.`sessione_allenamento` (`cf_atleta` , `data_allenamento`),
-      CONSTRAINT `codice_esercizio`
-        FOREIGN KEY (`codice_es`)
-        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`macchinario`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`macchinario` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`macchinario` (
-      `codice_es` INT NOT NULL,
-      `nome` VARCHAR(20) NOT NULL,
-      `descrizione` TEXT NULL DEFAULT NULL,
-      PRIMARY KEY (`codice_es`, `nome`),
-      INDEX `macchinario_idx` (`nome` ASC) VISIBLE,
-      CONSTRAINT `codice_es`
-        FOREIGN KEY (`codice_es`)
-        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-
-    -- -----------------------------------------------------
-    -- Table `personal_trainer_digitale`.`user`
-    -- -----------------------------------------------------
-    DROP TABLE IF EXISTS `personal_trainer_digitale`.`user` ;
-
-    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`user` (
-      `username` VARCHAR(30) NOT NULL,
-      `password` VARCHAR(40) NOT NULL,
-      `ruolo` ENUM('personal', 'atleta', 'gestore') NOT NULL,
-      PRIMARY KEY (`username`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;
-
-    USE `personal_trainer_digitale` ;
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema personal_trainer_digitale
+-- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Placeholder table for view `personal_trainer_digitale`.`atleti_personal`
+-- Schema personal_trainer_digitale
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleti_personal` (`cf_atleta` INT, `nome_atleta` INT, `cognome_atleta` INT, `cf_personal` INT, `nome_personal_trainer` INT, `cognome_personal_trainer` INT);
+CREATE SCHEMA IF NOT EXISTS `personal_trainer_digitale` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `personal_trainer_digitale` ;
 
 -- -----------------------------------------------------
--- Placeholder table for view `personal_trainer_digitale`.`esercizi_in_schede`
+-- Table `personal_trainer_digitale`.`personal_trainer`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi_in_schede` (`id_scheda` INT, `cf_atleta` INT, `codice_es` INT, `nome_esercizio` INT, `num_serie` INT, `ripetizioni` INT);
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`personal_trainer` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`personal_trainer` (
+  `cf_personal` VARCHAR(16) NOT NULL,
+  `nome` VARCHAR(20) NOT NULL,
+  `cognome` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`cf_personal`),
+  UNIQUE INDEX `cf_personal_UNIQUE` (`cf_personal` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 -- -----------------------------------------------------
--- Placeholder table for view `personal_trainer_digitale`.`statistiche_allenamenti`
+-- Table `personal_trainer_digitale`.`atleta`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`statistiche_allenamenti` (`cf_atleta` INT, `nome` INT, `totale_sessioni` INT, `sessioni_completate` INT);
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleta` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleta` (
+  `cf_atleta` VARCHAR(16) NOT NULL,
+  `nome` VARCHAR(20) NOT NULL,
+  `cognome` VARCHAR(20) NOT NULL,
+  `data_nascita` DATE NOT NULL,
+  `cf_personal` VARCHAR(16) NULL DEFAULT NULL,
+  PRIMARY KEY (`cf_atleta`),
+  UNIQUE INDEX `cf_atleta_UNIQUE` (`cf_atleta` ASC) VISIBLE,
+  INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
+  CONSTRAINT `cf_personal`
+    FOREIGN KEY (`cf_personal`)
+    REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 -- -----------------------------------------------------
--- Placeholder table for view `personal_trainer_digitale`.`utilizzo_macchinari`
+-- Table `personal_trainer_digitale`.`esercizi`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`utilizzo_macchinari` (`nome_macchinario` INT, `codice_es` INT, `nome_esercizio` INT, `id_scheda` INT, `cf_atleta` INT, `nome_atleta` INT, `cognome_atleta` INT);
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
+  `codice_es` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(20) NOT NULL,
+  `descrizione` TEXT NOT NULL,
+  `num_serie` INT UNSIGNED NOT NULL,
+  `ripetizioni` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`codice_es`),
+  UNIQUE INDEX `codice_es_UNIQUE` (`codice_es` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 -- -----------------------------------------------------
--- Placeholder table for view `personal_trainer_digitale`.`vista_schede_completa`
+-- Table `personal_trainer_digitale`.`scheda_allenamento`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`vista_schede_completa` (`id_scheda` INT, `cf_atleta` INT, `descrizione_scheda` INT, `stato_scheda` INT, `codice_es` INT, `nome_esercizio` INT, `descrizione_esercizio` INT, `num_serie` INT, `ripetizioni` INT, `nome_macchinario` INT, `descrizione_macchinario` INT);
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`scheda_allenamento` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
+  `id_scheda` INT NOT NULL AUTO_INCREMENT,
+  `cf_atleta` VARCHAR(16) NOT NULL,
+  `descrizione` TEXT NOT NULL,
+  `stato` TINYINT(1) NOT NULL,
+  `data_creazione` DATE NOT NULL,
+  `data_archiviazione` DATE NULL DEFAULT NULL,
+  `cf_personal` VARCHAR(16) NOT NULL,
+  PRIMARY KEY (`id_scheda`, `cf_atleta`),
+  UNIQUE INDEX `id_scheda_attiva_UNIQUE` (`id_scheda` ASC) VISIBLE,
+  INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
+  INDEX `cf_atleta_idx` (`cf_atleta` ASC) VISIBLE,
+  INDEX `c_f_atleta_idx` (`cf_atleta` ASC) VISIBLE,
+  CONSTRAINT `c_f_atleta`
+    FOREIGN KEY (`cf_atleta`)
+    REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`),
+  CONSTRAINT `cf_personal_trainer`
+    FOREIGN KEY (`cf_personal`)
+    REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 30
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `personal_trainer_digitale`.`contenuto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`contenuto` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`contenuto` (
+  `codice_es` INT NOT NULL,
+  `id_scheda` INT NOT NULL,
+  PRIMARY KEY (`codice_es`, `id_scheda`),
+  INDEX `id_scheda_attiva_idx` (`id_scheda` ASC) VISIBLE,
+  CONSTRAINT `codice_eser`
+    FOREIGN KEY (`codice_es`)
+    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`),
+  CONSTRAINT `id_scheda`
+    FOREIGN KEY (`id_scheda`)
+    REFERENCES `personal_trainer_digitale`.`scheda_allenamento` (`id_scheda`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `personal_trainer_digitale`.`sessione_allenamento`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`sessione_allenamento` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`sessione_allenamento` (
+  `cf_atleta` VARCHAR(16) NOT NULL,
+  `data_allenamento` DATE NOT NULL,
+  `durata` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`cf_atleta`, `data_allenamento`),
+  CONSTRAINT `codf_atleta`
+    FOREIGN KEY (`cf_atleta`)
+    REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`)
+    ON DELETE RESTRICT)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `personal_trainer_digitale`.`interagisce`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`interagisce` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`interagisce` (
+  `cf_atleta` VARCHAR(16) NOT NULL,
+  `data_allenamento` DATE NOT NULL,
+  `codice_es` INT NOT NULL,
+  `saltato` TINYINT(1) NOT NULL,
+  `contrassegnato` TINYINT(1) NOT NULL,
+  INDEX `codice_esercizio_idx` (`codice_es` ASC) VISIBLE,
+  INDEX `cfisc_atleta_idx` (`cf_atleta` ASC, `data_allenamento` ASC) VISIBLE,
+  CONSTRAINT `cfisc_atleta`
+    FOREIGN KEY (`cf_atleta` , `data_allenamento`)
+    REFERENCES `personal_trainer_digitale`.`sessione_allenamento` (`cf_atleta` , `data_allenamento`)
+    ON DELETE CASCADE,
+  CONSTRAINT `codice_esercizio`
+    FOREIGN KEY (`codice_es`)
+    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `personal_trainer_digitale`.`macchinario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`macchinario` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`macchinario` (
+  `codice_es` INT NOT NULL,
+  `nome` VARCHAR(20) NOT NULL,
+  `descrizione` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`codice_es`, `nome`),
+  INDEX `macchinario_idx` (`nome` ASC) VISIBLE,
+  CONSTRAINT `codice_es`
+    FOREIGN KEY (`codice_es`)
+    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `personal_trainer_digitale`.`user`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`user` ;
+
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`user` (
+  `username` VARCHAR(30) NOT NULL,
+  `password` VARCHAR(40) NOT NULL,
+  `ruolo` ENUM('personal', 'atleta', 'gestore') NOT NULL,
+  PRIMARY KEY (`username`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+USE `personal_trainer_digitale` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `personal_trainer_digitale`.`dettagli_esercizi`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`dettagli_esercizi` (`codice_es` INT, `nome_esercizio` INT, `descrizione_esercizio` INT, `num_serie` INT, `ripetizioni` INT, `nome_macchinario` INT, `descrizione_macchinario` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `personal_trainer_digitale`.`report_allenamenti`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`report_allenamenti` (`cf_atleta` INT, `nome_atleta` INT, `data_allenamento` INT, `durata` INT, `id_scheda` INT, `descrizione_scheda` INT, `esercizi_assegnati` INT, `esercizi_eseguiti` INT, `esercizi_completati` INT, `esercizi_saltati` INT, `totale_esercizi` INT, `percentuale_completamento` INT, `cf_personal` INT);
 
 -- -----------------------------------------------------
 -- procedure aggiorna_esercizi
@@ -426,15 +413,20 @@ BEGIN
 	DECLARE id_vecchia_scheda INT;
     DECLARE descrizione_vecchia TEXT;
 
-	DECLARE EXIT HANDLER FOR sqlexception
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-		ROLLBACK;
+        ROLLBACK;
         RESIGNAL;
-	END;
+    END;
 
-	SET TRANSACTION ISOLATION LEVEL repeatable read;
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    START TRANSACTION;
 
-    IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.personal_trainer WHERE cf_personal = var_cf_personal) THEN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM personal_trainer_digitale.personal_trainer
+        WHERE cf_personal = var_cf_personal
+    ) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Personal Trainer non trovato';
     END IF;
 
@@ -446,15 +438,26 @@ BEGIN
 
     IF id_vecchia_scheda IS NOT NULL THEN
         UPDATE personal_trainer_digitale.scheda_allenamento
-        SET stato = 0, data_archiviazione = CURDATE()
+        SET stato = 0,
+            data_archiviazione = CURDATE()
         WHERE id_scheda = id_vecchia_scheda;
     END IF;
 
     INSERT INTO personal_trainer_digitale.scheda_allenamento (
-        descrizione, stato, data_archiviazione, cf_atleta, cf_personal
+        descrizione,
+        stato,
+        data_archiviazione,
+        data_creazione,
+        cf_atleta,
+        cf_personal
     )
     VALUES (
-        var_descrizione, 1, NULL, var_cf_atleta, var_cf_personal
+        var_descrizione,
+        1,
+        NULL,
+        CURDATE(),
+        var_cf_atleta,
+        var_cf_personal
     );
 
     COMMIT;
@@ -561,6 +564,22 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Allenamento non trovato in quella data';
     END IF;
 
+	IF NOT EXISTS (
+		SELECT 1
+		FROM scheda_allenamento sa
+		JOIN contenuto c ON sa.id_scheda = c.id_scheda
+		WHERE sa.cf_atleta = var_cf_atleta
+		AND sa.data_creazione = (
+          SELECT MAX(s2.data_creazione)
+          FROM scheda_allenamento s2
+          WHERE s2.cf_atleta = var_cf_atleta
+		  AND s2.data_creazione <= var_data_allenamento
+		)
+		AND c.codice_es = var_codice_es
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio non fa parte della scheda attiva dell\'atleta alla data dell\'allenamento';
+	END IF;
+
 	IF EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`interagisce`
                WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento` = var_data_allenamento AND `codice_es` = var_codice_es AND `contrassegnato` = 1) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio è già stato completato';
@@ -614,13 +633,29 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Sessione non trovata per quella data';
     END IF;
 
+	IF NOT EXISTS (
+		SELECT 1
+		FROM scheda_allenamento sa
+		JOIN contenuto c ON sa.id_scheda = c.id_scheda
+		WHERE sa.cf_atleta = var_cf_atleta
+		AND sa.data_creazione = (
+          SELECT MAX(s2.data_creazione)
+          FROM scheda_allenamento s2
+          WHERE s2.cf_atleta = var_cf_atleta
+		  AND s2.data_creazione <= var_data_allenamento
+		)
+		AND c.codice_es = var_codice_es
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio non fa parte della scheda attiva dell\'atleta alla data dell\'allenamento';
+	END IF;
+
     IF EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`interagisce`
-               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento`= var_data_allenamento AND `codice_es` = var_codice_es AND `saltato` = 1) THEN
+               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento` = var_data_allenamento AND `codice_es` = var_codice_es AND `saltato` = 1) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio è già stato saltato';
     END IF;
 
     IF EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`interagisce`
-               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento`= var_data_allenamento AND `codice_es` = var_codice_es AND `contrassegnato` = 1) THEN
+               WHERE `cf_atleta` = var_cf_atleta AND `data_allenamento` = var_data_allenamento AND `codice_es` = var_codice_es AND `contrassegnato` = 1) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\'esercizio è già stato completato';
     END IF;
 
@@ -654,37 +689,36 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `genera_report`(
     IN var_cf_personal VARCHAR(16)
 )
 BEGIN
-    SELECT
-        a.cf_atleta,
-        CONCAT(a.nome, ' ', a.cognome) AS nome_atleta,
-        sa.data_allenamento,
-        sa.durata,
-        s.id_scheda,
-        s.descrizione AS descrizione_scheda,
-        COUNT(i.codice_es) AS totale_esercizi,
-        SUM(CASE WHEN i.saltato = 0 THEN 1 ELSE 0 END) AS esercizi_completati,
-        SUM(CASE WHEN i.saltato = 1 THEN 1 ELSE 0 END) AS esercizi_saltati,
-        ROUND(
-            IFNULL(SUM(CASE WHEN i.saltato = 0 THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(i.codice_es), 0), 0),
-            2
-        ) AS percentuale_completamento
-    FROM atleta a
-    JOIN sessione_allenamento sa
-        ON a.cf_atleta = sa.cf_atleta
-    JOIN interagisce i
-        ON i.cf_atleta = sa.cf_atleta AND i.data_allenamento = sa.data_allenamento
-    JOIN contenuto c
-        ON c.codice_es = i.codice_es
-    JOIN scheda_allenamento s
-        ON s.id_scheda = c.id_scheda AND s.cf_atleta = a.cf_atleta
-        AND (s.data_archiviazione IS NULL OR sa.data_allenamento <= s.data_archiviazione)
-    WHERE sa.data_allenamento BETWEEN var_data_inizio AND var_data_fine
-      AND a.cf_personal = var_cf_personal
-    GROUP BY
-        a.cf_atleta, a.nome, a.cognome,
-        sa.data_allenamento, sa.durata,
-        s.id_scheda, s.descrizione
-    ORDER BY a.cf_atleta, sa.data_allenamento;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    START TRANSACTION;
+
+    -- Controllo esistenza Personal Trainer
+    IF NOT EXISTS (
+        SELECT 1 FROM personal_trainer WHERE cf_personal = var_cf_personal
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Personal trainer non trovato';
+    END IF;
+
+    -- Controllo validità date
+    IF var_data_inizio > var_data_fine THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Data inizio maggiore di data fine';
+    END IF;
+
+    -- Query finale usando la vista
+    SELECT *
+    FROM report_allenamenti
+    WHERE data_allenamento BETWEEN var_data_inizio AND var_data_fine
+      AND cf_personal = var_cf_personal;
+
+    COMMIT;
 END$$
 
 DELIMITER ;
@@ -845,20 +879,35 @@ DROP procedure IF EXISTS `personal_trainer_digitale`.`stampa_esercizio`;
 
 DELIMITER $$
 USE `personal_trainer_digitale`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `stampa_esercizio`(in var_codice_es INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `stampa_esercizio`(IN var_codice_es INT)
 BEGIN
-	DECLARE esercizio_nome VARCHAR(20);
-    DECLARE num_serie INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
 
-    SELECT e.nome, e.num_serie
-    INTO esercizio_nome, num_serie
-    FROM personal_trainer_digitale.esercizi e
-    WHERE e.codice_es = var_codice_es;
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    START TRANSACTION;
 
-    IF esercizio_nome IS NULL THEN
+    IF NOT EXISTS (
+        SELECT 1 FROM dettagli_esercizi WHERE codice_es = var_codice_es
+    ) THEN
+        ROLLBACK;
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esercizio non trovato!';
     ELSE
-		SELECT esercizio_nome AS nome_esercizio, num_serie;
+        SELECT
+            nome_esercizio,
+            descrizione_esercizio,
+            num_serie,
+            ripetizioni,
+            COALESCE(nome_macchinario, 'Nessun macchinario associato') AS nome_macchinario,
+            COALESCE(descrizione_macchinario, 'N/A') AS descrizione_macchinario
+        FROM
+            dettagli_esercizi
+        WHERE
+            codice_es = var_codice_es;
+        COMMIT;
     END IF;
 END$$
 
@@ -884,6 +933,7 @@ BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     SET TRANSACTION READ ONLY;
 
+    -- Controlla se l'atleta esiste
     IF NOT EXISTS (
         SELECT 1
         FROM personal_trainer_digitale.atleta
@@ -892,6 +942,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
 
+    -- Controlla se l'atleta ha almeno una scheda archiviata
     IF NOT EXISTS (
         SELECT 1
         FROM personal_trainer_digitale.scheda_allenamento
@@ -903,6 +954,7 @@ BEGIN
 
     START TRANSACTION;
 
+    -- Visualizza le schede archiviate e gli esercizi collegati
     SELECT
         sa.id_scheda,
         sa.descrizione AS descrizione_scheda,
@@ -951,10 +1003,12 @@ BEGIN
 
     START TRANSACTION;
 
+    -- Controllo se l'atleta esiste
     IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.atleta WHERE cf_atleta = var_cf_atleta) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
 
+    -- Controllo se l'atleta ha una scheda attiva
     IF NOT EXISTS (
         SELECT 1
         FROM personal_trainer_digitale.scheda_allenamento
@@ -963,6 +1017,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nessuna scheda attiva trovata per l\'atleta';
     END IF;
 
+    -- Visualizzo scheda attiva con i relativi esercizi
     SELECT
         sa.id_scheda,
         sa.descrizione AS descrizione_scheda,
@@ -989,44 +1044,20 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
--- View `personal_trainer_digitale`.`atleti_personal`
+-- View `personal_trainer_digitale`.`dettagli_esercizi`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleti_personal`;
-DROP VIEW IF EXISTS `personal_trainer_digitale`.`atleti_personal` ;
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`dettagli_esercizi`;
+DROP VIEW IF EXISTS `personal_trainer_digitale`.`dettagli_esercizi` ;
 USE `personal_trainer_digitale`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`atleti_personal` AS select `a`.`cf_atleta` AS `cf_atleta`,`a`.`nome` AS `nome_atleta`,`a`.`cognome` AS `cognome_atleta`,`pt`.`cf_personal` AS `cf_personal`,`pt`.`nome` AS `nome_personal_trainer`,`pt`.`cognome` AS `cognome_personal_trainer` from (`personal_trainer_digitale`.`atleta` `a` join `personal_trainer_digitale`.`personal_trainer` `pt` on((`a`.`cf_personal` = `pt`.`cf_personal`)));
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`dettagli_esercizi` AS select `e`.`codice_es` AS `codice_es`,`e`.`nome` AS `nome_esercizio`,`e`.`descrizione` AS `descrizione_esercizio`,`e`.`num_serie` AS `num_serie`,`e`.`ripetizioni` AS `ripetizioni`,`m`.`nome` AS `nome_macchinario`,`m`.`descrizione` AS `descrizione_macchinario` from (`personal_trainer_digitale`.`esercizi` `e` left join `personal_trainer_digitale`.`macchinario` `m` on((`e`.`codice_es` = `m`.`codice_es`)));
 
 -- -----------------------------------------------------
--- View `personal_trainer_digitale`.`esercizi_in_schede`
+-- View `personal_trainer_digitale`.`report_allenamenti`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi_in_schede`;
-DROP VIEW IF EXISTS `personal_trainer_digitale`.`esercizi_in_schede` ;
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`report_allenamenti`;
+DROP VIEW IF EXISTS `personal_trainer_digitale`.`report_allenamenti` ;
 USE `personal_trainer_digitale`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`esercizi_in_schede` AS select `sa`.`id_scheda` AS `id_scheda`,`sa`.`cf_atleta` AS `cf_atleta`,`e`.`codice_es` AS `codice_es`,`e`.`nome` AS `nome_esercizio`,`e`.`num_serie` AS `num_serie`,`e`.`ripetizioni` AS `ripetizioni` from ((`personal_trainer_digitale`.`scheda_allenamento` `sa` join `personal_trainer_digitale`.`contenuto` `c` on((`sa`.`id_scheda` = `c`.`id_scheda`))) join `personal_trainer_digitale`.`esercizi` `e` on((`c`.`codice_es` = `e`.`codice_es`)));
-
--- -----------------------------------------------------
--- View `personal_trainer_digitale`.`statistiche_allenamenti`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`statistiche_allenamenti`;
-DROP VIEW IF EXISTS `personal_trainer_digitale`.`statistiche_allenamenti` ;
-USE `personal_trainer_digitale`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`statistiche_allenamenti` AS select `a`.`cf_atleta` AS `cf_atleta`,`a`.`nome` AS `nome`,count(distinct `s`.`data_allenamento`) AS `totale_sessioni`,count(distinct (case when (`i`.`saltato` = 0) then `s`.`data_allenamento` end)) AS `sessioni_completate` from ((`personal_trainer_digitale`.`atleta` `a` left join `personal_trainer_digitale`.`sessione_allenamento` `s` on((`a`.`cf_atleta` = `s`.`cf_atleta`))) left join `personal_trainer_digitale`.`interagisce` `i` on(((`s`.`cf_atleta` = `i`.`cf_atleta`) and (`s`.`data_allenamento` = `i`.`data_allenamento`)))) group by `a`.`cf_atleta`,`a`.`nome`;
-
--- -----------------------------------------------------
--- View `personal_trainer_digitale`.`utilizzo_macchinari`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`utilizzo_macchinari`;
-DROP VIEW IF EXISTS `personal_trainer_digitale`.`utilizzo_macchinari` ;
-USE `personal_trainer_digitale`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`utilizzo_macchinari` AS select `m`.`nome` AS `nome_macchinario`,`e`.`codice_es` AS `codice_es`,`e`.`nome` AS `nome_esercizio`,`sa`.`id_scheda` AS `id_scheda`,`sa`.`cf_atleta` AS `cf_atleta`,`a`.`nome` AS `nome_atleta`,`a`.`cognome` AS `cognome_atleta` from ((((`personal_trainer_digitale`.`macchinario` `m` join `personal_trainer_digitale`.`esercizi` `e` on((`m`.`codice_es` = `e`.`codice_es`))) join `personal_trainer_digitale`.`contenuto` `c` on((`e`.`codice_es` = `c`.`codice_es`))) join `personal_trainer_digitale`.`scheda_allenamento` `sa` on((`c`.`id_scheda` = `sa`.`id_scheda`))) join `personal_trainer_digitale`.`atleta` `a` on((`sa`.`cf_atleta` = `a`.`cf_atleta`)));
-
--- -----------------------------------------------------
--- View `personal_trainer_digitale`.`vista_schede_completa`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`vista_schede_completa`;
-DROP VIEW IF EXISTS `personal_trainer_digitale`.`vista_schede_completa` ;
-USE `personal_trainer_digitale`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`vista_schede_completa` AS select `s`.`id_scheda` AS `id_scheda`,`s`.`cf_atleta` AS `cf_atleta`,`s`.`descrizione` AS `descrizione_scheda`,(case when (`s`.`stato` = 1) then 'Attiva' else 'Archiviata' end) AS `stato_scheda`,`e`.`codice_es` AS `codice_es`,`e`.`nome` AS `nome_esercizio`,`e`.`descrizione` AS `descrizione_esercizio`,`e`.`num_serie` AS `num_serie`,`e`.`ripetizioni` AS `ripetizioni`,`m`.`nome` AS `nome_macchinario`,`m`.`descrizione` AS `descrizione_macchinario` from (((`personal_trainer_digitale`.`scheda_allenamento` `s` join `personal_trainer_digitale`.`contenuto` `c` on((`s`.`id_scheda` = `c`.`id_scheda`))) join `personal_trainer_digitale`.`esercizi` `e` on((`c`.`codice_es` = `e`.`codice_es`))) left join `personal_trainer_digitale`.`macchinario` `m` on((`e`.`codice_es` = `m`.`codice_es`)));
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`report_allenamenti` AS select `a`.`cf_atleta` AS `cf_atleta`,concat(`a`.`nome`,' ',`a`.`cognome`) AS `nome_atleta`,`sa`.`data_allenamento` AS `data_allenamento`,`sa`.`durata` AS `durata`,ifnull(`sa_scheda`.`id_scheda`,'Nessuna scheda') AS `id_scheda`,ifnull(`sa_scheda`.`descrizione`,'Nessuna scheda') AS `descrizione_scheda`,ifnull(`sa_scheda`.`esercizi_assegnati`,0) AS `esercizi_assegnati`,count(`i`.`codice_es`) AS `esercizi_eseguiti`,sum((case when (`i`.`saltato` = 0) then 1 else 0 end)) AS `esercizi_completati`,sum((case when (`i`.`saltato` = 1) then 1 else 0 end)) AS `esercizi_saltati`,sum((case when ((`i`.`saltato` = 0) or (`i`.`saltato` = 1)) then 1 else 0 end)) AS `totale_esercizi`,round(ifnull(((sum((case when (`i`.`saltato` = 0) then 1 else 0 end)) * 100.0) / nullif(count(`i`.`codice_es`),0)),2),0) AS `percentuale_completamento`,`a`.`cf_personal` AS `cf_personal` from (((`personal_trainer_digitale`.`atleta` `a` join `personal_trainer_digitale`.`sessione_allenamento` `sa` on((`a`.`cf_atleta` = `sa`.`cf_atleta`))) join `personal_trainer_digitale`.`interagisce` `i` on(((`i`.`cf_atleta` = `sa`.`cf_atleta`) and (`i`.`data_allenamento` = `sa`.`data_allenamento`)))) left join (select `s1`.`id_scheda` AS `id_scheda`,`s1`.`cf_atleta` AS `cf_atleta`,`s1`.`descrizione` AS `descrizione`,`s1`.`data_creazione` AS `data_creazione`,(select count(0) from `personal_trainer_digitale`.`contenuto` `c` where (`c`.`id_scheda` = `s1`.`id_scheda`)) AS `esercizi_assegnati` from `personal_trainer_digitale`.`scheda_allenamento` `s1`) `sa_scheda` on(((`sa_scheda`.`cf_atleta` = `a`.`cf_atleta`) and (`sa_scheda`.`data_creazione` = (select max(`s2`.`data_creazione`) from `personal_trainer_digitale`.`scheda_allenamento` `s2` where ((`s2`.`cf_atleta` = `a`.`cf_atleta`) and (`s2`.`data_creazione` <= `sa`.`data_allenamento`))))))) group by `a`.`cf_atleta`,`a`.`nome`,`a`.`cognome`,`sa`.`data_allenamento`,`sa`.`durata`,`sa_scheda`.`id_scheda`,`sa_scheda`.`descrizione`,`sa_scheda`.`esercizi_assegnati`,`a`.`cf_personal`;
 USE `personal_trainer_digitale`;
 
 DELIMITER $$
@@ -1196,9 +1227,9 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
--- -----------------------------------------------------
+-- --------------------------------------------------------------
 -- Data for table `personal_trainer_digitale`.`personal_trainer`
--- -----------------------------------------------------
+-- --------------------------------------------------------------
 START TRANSACTION;
 USE `personal_trainer_digitale`;
 INSERT INTO `personal_trainer_digitale`.`personal_trainer` (`cf_personal`, `nome`, `cognome`) VALUES ('aaaabbbbccccdddd', 'Mario', 'Rossi');
