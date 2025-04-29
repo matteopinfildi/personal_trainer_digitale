@@ -4,203 +4,204 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema personal_trainer_digitale
--- -----------------------------------------------------
+    -- -----------------------------------------------------
+    -- Schema mydb
+    -- -----------------------------------------------------
+    -- -----------------------------------------------------
+    -- Schema personal_trainer_digitale
+    -- -----------------------------------------------------
 
--- -----------------------------------------------------
--- Schema personal_trainer_digitale
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `personal_trainer_digitale` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE `personal_trainer_digitale` ;
+    -- -----------------------------------------------------
+    -- Schema personal_trainer_digitale
+    -- -----------------------------------------------------
+    CREATE SCHEMA IF NOT EXISTS `personal_trainer_digitale` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+    USE `personal_trainer_digitale` ;
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`personal_trainer`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`personal_trainer` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`personal_trainer`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`personal_trainer` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`personal_trainer` (
-  `cf_personal` VARCHAR(16) NOT NULL,
-  `nome` VARCHAR(20) NOT NULL,
-  `cognome` VARCHAR(20) NOT NULL,
-  PRIMARY KEY (`cf_personal`),
-  UNIQUE INDEX `cf_personal_UNIQUE` (`cf_personal` ASC) VISIBLE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`atleta`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleta` ;
-
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleta` (
-  `cf_atleta` VARCHAR(16) NOT NULL,
-  `nome` VARCHAR(20) NOT NULL,
-  `cognome` VARCHAR(20) NOT NULL,
-  `data_nascita` DATE NOT NULL,
-  `cf_personal` VARCHAR(16) NULL DEFAULT NULL,
-  PRIMARY KEY (`cf_atleta`),
-  UNIQUE INDEX `cf_atleta_UNIQUE` (`cf_atleta` ASC) VISIBLE,
-  INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
-  CONSTRAINT `cf_personal`
-    FOREIGN KEY (`cf_personal`)
-    REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`personal_trainer` (
+      `cf_personal` VARCHAR(16) NOT NULL,
+      `nome` VARCHAR(20) NOT NULL,
+      `cognome` VARCHAR(20) NOT NULL,
+      PRIMARY KEY (`cf_personal`),
+      UNIQUE INDEX `cf_personal_UNIQUE` (`cf_personal` ASC) VISIBLE)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`esercizi`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`atleta`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleta` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
-  `codice_es` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(20) NOT NULL,
-  `descrizione` TEXT NOT NULL,
-  `num_serie` INT UNSIGNED NOT NULL,
-  `ripetizioni` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`codice_es`),
-  UNIQUE INDEX `codice_es_UNIQUE` (`codice_es` ASC) VISIBLE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 7
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`scheda_allenamento`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`scheda_allenamento` ;
-
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
-  `id_scheda` INT NOT NULL AUTO_INCREMENT,
-  `cf_atleta` VARCHAR(16) NOT NULL,
-  `descrizione` TEXT NOT NULL,
-  `stato` TINYINT(1) NOT NULL,
-  `data_archiviazione` DATE NULL DEFAULT NULL,
-  `cf_personal` VARCHAR(16) NOT NULL,
-  PRIMARY KEY (`id_scheda`, `cf_atleta`),
-  UNIQUE INDEX `id_scheda_attiva_UNIQUE` (`id_scheda` ASC) VISIBLE,
-  INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
-  INDEX `cf_atleta_idx` (`cf_atleta` ASC) VISIBLE,
-  INDEX `c_f_atleta_idx` (`cf_atleta` ASC) VISIBLE,
-  CONSTRAINT `c_f_atleta`
-    FOREIGN KEY (`cf_atleta`)
-    REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`),
-  CONSTRAINT `cf_personal_trainer`
-    FOREIGN KEY (`cf_personal`)
-    REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 23
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleta` (
+      `cf_atleta` VARCHAR(16) NOT NULL,
+      `nome` VARCHAR(20) NOT NULL,
+      `cognome` VARCHAR(20) NOT NULL,
+      `data_nascita` DATE NOT NULL,
+      `cf_personal` VARCHAR(16) NULL DEFAULT NULL,
+      PRIMARY KEY (`cf_atleta`),
+      UNIQUE INDEX `cf_atleta_UNIQUE` (`cf_atleta` ASC) VISIBLE,
+      INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
+      CONSTRAINT `cf_personal`
+        FOREIGN KEY (`cf_personal`)
+        REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`contenuto`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`contenuto` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`esercizi`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`contenuto` (
-  `codice_es` INT NOT NULL,
-  `id_scheda` INT NOT NULL,
-  PRIMARY KEY (`codice_es`, `id_scheda`),
-  INDEX `id_scheda_attiva_idx` (`id_scheda` ASC) VISIBLE,
-  CONSTRAINT `codice_eser`
-    FOREIGN KEY (`codice_es`)
-    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`),
-  CONSTRAINT `id_scheda`
-    FOREIGN KEY (`id_scheda`)
-    REFERENCES `personal_trainer_digitale`.`scheda_allenamento` (`id_scheda`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
+      `codice_es` INT NOT NULL AUTO_INCREMENT,
+      `nome` VARCHAR(20) NOT NULL,
+      `descrizione` TEXT NOT NULL,
+      `num_serie` INT UNSIGNED NOT NULL,
+      `ripetizioni` INT UNSIGNED NOT NULL,
+      PRIMARY KEY (`codice_es`),
+      UNIQUE INDEX `codice_es_UNIQUE` (`codice_es` ASC) VISIBLE)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 7
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`sessione_allenamento`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`sessione_allenamento` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`scheda_allenamento`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`scheda_allenamento` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`sessione_allenamento` (
-  `cf_atleta` VARCHAR(16) NOT NULL,
-  `data_allenamento` DATE NOT NULL,
-  `durata` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`cf_atleta`, `data_allenamento`),
-  CONSTRAINT `codf_atleta`
-    FOREIGN KEY (`cf_atleta`)
-    REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`interagisce`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`interagisce` ;
-
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`interagisce` (
-  `cf_atleta` VARCHAR(16) NOT NULL,
-  `data_allenamento` DATE NOT NULL,
-  `codice_es` INT NOT NULL,
-  `saltato` TINYINT(1) NOT NULL,
-  `contrassegnato` TINYINT(1) NOT NULL,
-  INDEX `codice_esercizio_idx` (`codice_es` ASC) VISIBLE,
-  INDEX `cfisc_atleta_idx` (`cf_atleta` ASC, `data_allenamento` ASC) VISIBLE,
-  CONSTRAINT `cfisc_atleta`
-    FOREIGN KEY (`cf_atleta` , `data_allenamento`)
-    REFERENCES `personal_trainer_digitale`.`sessione_allenamento` (`cf_atleta` , `data_allenamento`),
-  CONSTRAINT `codice_esercizio`
-    FOREIGN KEY (`codice_es`)
-    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
+      `id_scheda` INT NOT NULL AUTO_INCREMENT,
+      `cf_atleta` VARCHAR(16) NOT NULL,
+      `descrizione` TEXT NOT NULL,
+      `stato` TINYINT(1) NOT NULL,
+      `data_creazione` DATE NOT NULL,
+      `data_archiviazione` DATE NULL DEFAULT NULL,
+      `cf_personal` VARCHAR(16) NOT NULL,
+      PRIMARY KEY (`id_scheda`, `cf_atleta`),
+      UNIQUE INDEX `id_scheda_attiva_UNIQUE` (`id_scheda` ASC) VISIBLE,
+      INDEX `cf_personal_idx` (`cf_personal` ASC) VISIBLE,
+      INDEX `cf_atleta_idx` (`cf_atleta` ASC) VISIBLE,
+      INDEX `c_f_atleta_idx` (`cf_atleta` ASC) VISIBLE,
+      CONSTRAINT `c_f_atleta`
+        FOREIGN KEY (`cf_atleta`)
+        REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`),
+      CONSTRAINT `cf_personal_trainer`
+        FOREIGN KEY (`cf_personal`)
+        REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 27
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`macchinario`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`macchinario` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`contenuto`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`contenuto` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`macchinario` (
-  `codice_es` INT NOT NULL,
-  `nome` VARCHAR(20) NOT NULL,
-  `descrizione` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`codice_es`, `nome`),
-  INDEX `macchinario_idx` (`nome` ASC) VISIBLE,
-  CONSTRAINT `codice_es`
-    FOREIGN KEY (`codice_es`)
-    REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`contenuto` (
+      `codice_es` INT NOT NULL,
+      `id_scheda` INT NOT NULL,
+      PRIMARY KEY (`codice_es`, `id_scheda`),
+      INDEX `id_scheda_attiva_idx` (`id_scheda` ASC) VISIBLE,
+      CONSTRAINT `codice_eser`
+        FOREIGN KEY (`codice_es`)
+        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`),
+      CONSTRAINT `id_scheda`
+        FOREIGN KEY (`id_scheda`)
+        REFERENCES `personal_trainer_digitale`.`scheda_allenamento` (`id_scheda`)
+        ON DELETE CASCADE)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table `personal_trainer_digitale`.`user`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `personal_trainer_digitale`.`user` ;
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`sessione_allenamento`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`sessione_allenamento` ;
 
-CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`user` (
-  `username` VARCHAR(30) NOT NULL,
-  `password` VARCHAR(40) NOT NULL,
-  `ruolo` ENUM('personal', 'atleta', 'gestore') NOT NULL,
-  PRIMARY KEY (`username`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`sessione_allenamento` (
+      `cf_atleta` VARCHAR(16) NOT NULL,
+      `data_allenamento` DATE NOT NULL,
+      `durata` INT UNSIGNED NOT NULL,
+      PRIMARY KEY (`cf_atleta`, `data_allenamento`),
+      CONSTRAINT `codf_atleta`
+        FOREIGN KEY (`cf_atleta`)
+        REFERENCES `personal_trainer_digitale`.`atleta` (`cf_atleta`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
-USE `personal_trainer_digitale` ;
+
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`interagisce`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`interagisce` ;
+
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`interagisce` (
+      `cf_atleta` VARCHAR(16) NOT NULL,
+      `data_allenamento` DATE NOT NULL,
+      `codice_es` INT NOT NULL,
+      `saltato` TINYINT(1) NOT NULL,
+      `contrassegnato` TINYINT(1) NOT NULL,
+      INDEX `codice_esercizio_idx` (`codice_es` ASC) VISIBLE,
+      INDEX `cfisc_atleta_idx` (`cf_atleta` ASC, `data_allenamento` ASC) VISIBLE,
+      CONSTRAINT `cfisc_atleta`
+        FOREIGN KEY (`cf_atleta` , `data_allenamento`)
+        REFERENCES `personal_trainer_digitale`.`sessione_allenamento` (`cf_atleta` , `data_allenamento`),
+      CONSTRAINT `codice_esercizio`
+        FOREIGN KEY (`codice_es`)
+        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`macchinario`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`macchinario` ;
+
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`macchinario` (
+      `codice_es` INT NOT NULL,
+      `nome` VARCHAR(20) NOT NULL,
+      `descrizione` TEXT NULL DEFAULT NULL,
+      PRIMARY KEY (`codice_es`, `nome`),
+      INDEX `macchinario_idx` (`nome` ASC) VISIBLE,
+      CONSTRAINT `codice_es`
+        FOREIGN KEY (`codice_es`)
+        REFERENCES `personal_trainer_digitale`.`esercizi` (`codice_es`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+
+    -- -----------------------------------------------------
+    -- Table `personal_trainer_digitale`.`user`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `personal_trainer_digitale`.`user` ;
+
+    CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`user` (
+      `username` VARCHAR(30) NOT NULL,
+      `password` VARCHAR(40) NOT NULL,
+      `ruolo` ENUM('personal', 'atleta', 'gestore') NOT NULL,
+      PRIMARY KEY (`username`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+    USE `personal_trainer_digitale` ;
 
 -- -----------------------------------------------------
 -- Placeholder table for view `personal_trainer_digitale`.`atleti_personal`

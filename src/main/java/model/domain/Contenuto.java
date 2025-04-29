@@ -1,5 +1,7 @@
 package model.domain;
 
+// N.B: da rimuovere
+
 public class Contenuto {
 
     private Esercizio esercizio;

@@ -70,7 +70,16 @@ public class EserciziDAO {
                 if (rs.next()) {
                     String nomeEsercizio = rs.getString("nome_esercizio");
                     int numSerie = rs.getInt("num_serie");
-                    esercizioInfo = "Nome esercizio: " + nomeEsercizio + ", Serie: " + numSerie;
+                    int ripetizioni = rs.getInt("ripetizioni");
+                    String nomeMacchinario = rs.getString("nome_macchinario");
+                    String descrizioneMacchinario = rs.getString("descrizione_macchinario");
+
+                    esercizioInfo = "Nome esercizio: " + nomeEsercizio + "\n" +
+                            "Serie: " + numSerie + "\n" +
+                            "Ripetizioni: " + ripetizioni + "\n" +
+                            "Macchinario: " + nomeMacchinario + "\n" +
+                            "Descrizione macchinario: " + descrizioneMacchinario;
+
                 } else {
                     esercizioInfo = "Esercizio non trovato!";
                 }
@@ -81,4 +90,6 @@ public class EserciziDAO {
 
         return esercizioInfo;
     }
+
+
 }
