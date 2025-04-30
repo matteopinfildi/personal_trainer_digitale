@@ -36,15 +36,12 @@ public class InterazioneDAO {
         CallableStatement statement = null;
 
         try {
-            // Chiamata alla stored procedure "esercizio_saltato"
             statement = connection.prepareCall("{CALL esercizio_saltato(?, ?, ?)}");
 
-            // Imposta i parametri per la stored procedure
             statement.setString(1, interazione.getAtleta().getCfAtleta());
             statement.setInt(2, interazione.getEsercizio().getCodiceEs());
             statement.setDate(3, java.sql.Date.valueOf(interazione.getSessioneAllenamento().getDataAllenamento()));
 
-            // Esegui la stored procedure
             statement.executeUpdate();
 
         } catch (SQLException e) {

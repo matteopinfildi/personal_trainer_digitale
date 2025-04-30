@@ -26,7 +26,7 @@ public class AtletaController implements Controller {
                 case 4 -> visualizzaSchedaArchiviata();
                 case 5 -> registrazioneAllenamento();
                 case 6 -> stampaEsercizio();
-                case 7 -> System.exit(0); // placeholder per le prossime operazioni
+                case 7 -> System.exit(0);
             }
         }
     }
@@ -44,14 +44,11 @@ public class AtletaController implements Controller {
 
     private void esercizioSaltato() {
         try {
-            // Ottieni i dati per l'esercizio saltato dalla view
             Interagisce interazione = AtletaView.getDatiSaltato();
 
-            // Crea un'istanza della DAO e invoca la procedura
             InterazioneDAO dao = new InterazioneDAO();
             dao.esercizioSaltato(interazione);
 
-            // Mostra il risultato
             AtletaView.showOutput("Esercizio saltato con successo!");
 
         } catch (DAOException e) {
@@ -73,7 +70,6 @@ public class AtletaController implements Controller {
                     .append("Personal Trainer: ").append(scheda.getCfPersonal()).append("\n")
                     .append("Esercizi:\n");
 
-            // Aggiungiamo ogni esercizio con serie e ripetizioni
             for (Esercizio esercizio : scheda.getEsercizi()) {
                 output.append("- ").append(esercizio.getNome())
                         .append(": ").append(esercizio.getNumSerie())
@@ -131,18 +127,15 @@ public class AtletaController implements Controller {
 
     public void registrazioneAllenamento() {
         try {
-            String cfAtleta = AtletaView.getCfAtleta(); // Ottieni il codice fiscale dell'atleta
-            LocalDate dataAllenamento = AtletaView.getDataAllenamento(); // Ottieni la data dell'allenamento
-            int durata = AtletaView.getDurataAllenamento(); // Ottieni la durata dell'allenamento
+            String cfAtleta = AtletaView.getCfAtleta();
+            LocalDate dataAllenamento = AtletaView.getDataAllenamento();
+            int durata = AtletaView.getDurataAllenamento();
 
-            // Crea un oggetto SessioneAllenamento
             SessioneAllenamento sessione = new SessioneAllenamento(new Atleta(cfAtleta), dataAllenamento, durata);
 
-            // Crea un'istanza della DAO e invoca la procedura
             SessioneAllenamentoDAO dao = new SessioneAllenamentoDAO();
             dao.registrazioneAllenamento(sessione);
 
-            // Mostra il risultato
             AtletaView.showOutput("Sessione di allenamento registrata con successo!");
 
         } catch (DAOException e) {
@@ -151,14 +144,11 @@ public class AtletaController implements Controller {
     }
 
     public static void stampaEsercizio() {
-        // Chiediamo il codice dell'esercizio all'utente
         int codiceEsercizio = AtletaView.getCodiceEsercizio();
 
-        // Passiamo il codice esercizio alla DAO per ottenere i dettagli
         EserciziDAO dao = new EserciziDAO();
         String result = dao.getDettagliEsercizio(codiceEsercizio);
 
-        // Mostriamo il risultato ottenuto
         AtletaView.showOutput(result);
     }
 }

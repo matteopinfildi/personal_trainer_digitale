@@ -7,30 +7,6 @@ import java.sql.*;
 
 public class EserciziDAO {
 
-    public Esercizio getEsercizioByCodice(int codiceEs) throws DAOException {
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM esercizi WHERE codice_es = ?")) {
-
-            stmt.setInt(1, codiceEs);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return new Esercizio(
-                        rs.getInt("codice_es"),
-                        rs.getString("nome"),
-                        rs.getString("descrizione"),
-                        rs.getInt("num_serie"),
-                        rs.getInt("ripetizioni")
-                );
-            } else {
-                throw new DAOException("Esercizio non trovato.");
-            }
-        } catch (SQLException e) {
-            throw new DAOException("Errore nel recupero dell'esercizio: " + e.getMessage());
-        }
-    }
-
-
     public void aggiungiEsercizio(Esercizio esercizio) throws DAOException {
         String sql = "{CALL aggiorna_esercizi(?, ?, ?, ?)}";
         try (Connection conn = ConnectionFactory.getConnection();

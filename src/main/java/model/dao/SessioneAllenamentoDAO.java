@@ -9,16 +9,15 @@ import java.sql.SQLException;
 
 public class SessioneAllenamentoDAO {
 
-    // Metodo per registrare una sessione di allenamento
     public void registrazioneAllenamento(SessioneAllenamento sessione) throws DAOException {
         String sql = "CALL registrazione_allenamento(?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, sessione.getAtleta().getCfAtleta()); // Codice fiscale atleta
-            ps.setDate(2, java.sql.Date.valueOf(sessione.getDataAllenamento())); // Data allenamento
-            ps.setInt(3, sessione.getDurata()); // Durata allenamento
+            ps.setString(1, sessione.getAtleta().getCfAtleta());
+            ps.setDate(2, java.sql.Date.valueOf(sessione.getDataAllenamento()));
+            ps.setInt(3, sessione.getDurata());
 
             ps.executeUpdate();
 

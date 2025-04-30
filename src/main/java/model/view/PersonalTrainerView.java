@@ -4,7 +4,6 @@ import model.domain.Report;
 import model.domain.SchedaAllenamento;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -86,14 +85,9 @@ public class PersonalTrainerView {
     }
 
     public static void showOutput(String message) {
-        // Stampa il messaggio passato come argomento
         System.out.println(message);
     }
 
-    public static Date getData(String tipo) {
-        System.out.print("Inserisci " + tipo + " (YYYY-MM-DD): ");
-        return Date.valueOf(input.nextLine());
-    }
 
 
     public static void showReport(List<Report> report) {

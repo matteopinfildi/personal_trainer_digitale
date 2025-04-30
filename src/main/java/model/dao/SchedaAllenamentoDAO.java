@@ -10,13 +10,13 @@ import java.util.List;
 
 public class SchedaAllenamentoDAO {
     public void creazioneSchedaAttiva(SchedaAllenamento scheda) throws DAOException {
-        String sql = "{CALL creazione_scheda_attiva(?, ?, ?)}";  // Ho aggiunto 1 parametro in più, se necessario
+        String sql = "{CALL creazione_scheda_attiva(?, ?, ?)}";
         try (Connection conn = ConnectionFactory.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.setString(1, scheda.getCfPersonal());
-            stmt.setString(2, scheda.getCfAtleta());  // cfAtleta
-            stmt.setString(3, scheda.getDescrizione());  // descrizione
+            stmt.setString(2, scheda.getCfAtleta());
+            stmt.setString(3, scheda.getDescrizione());
 
             stmt.execute();
         } catch (SQLException e) {

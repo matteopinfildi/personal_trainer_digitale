@@ -28,13 +28,6 @@ public class Interagisce {
         return esercizio;
     }
 
-    public boolean isSaltato() {
-        return saltato;
-    }
-
-    public boolean isContrassegnato() {
-        return contrassegnato;
-    }
 
     @Override
     public String toString() {

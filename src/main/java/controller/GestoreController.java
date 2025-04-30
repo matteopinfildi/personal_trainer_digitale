@@ -54,14 +54,11 @@ public class GestoreController implements Controller {
 
     private void aggiungiMacchinario() {
         try {
-            // Ottieni solo il codice (senza creare l'oggetto Esercizio completo)
             int codiceEs = GestoreView.getCodiceEsercizio();
 
-            // Ottieni i dati del macchinario
             String nome = GestoreView.getNomeMacchinario();
             String descrizione = GestoreView.getDescrizioneMacchinario();
 
-            // Crea un Esercizio "light" con solo il codice
             Esercizio esercizio = new Esercizio(codiceEs);
 
             Macchinario macchinario = new Macchinario(esercizio, nome, descrizione);
@@ -76,16 +73,12 @@ public class GestoreController implements Controller {
 
     private void eliminaMacchinario() {
         try {
-            // Ottieni il nome del macchinario dalla view
             String nomeMacchinario = GestoreView.getNomeMacchinario();
 
-            // Crea un'istanza della DAO per eliminare il macchinario
             MacchinarioDAO macchinarioDAO = new MacchinarioDAO();
 
-            // Esegui l'eliminazione del macchinario tramite la DAO
             macchinarioDAO.eliminaMacchinario(nomeMacchinario);
 
-            // Mostra il messaggio di successo
             GestoreView.showOutput("Macchinario eliminato correttamente!");
 
         } catch (DAOException e) {

@@ -19,29 +19,12 @@ public class Atleta {
 
     public Atleta(String cfAtleta){this.cfAtleta = cfAtleta;}
 
-    public Atleta(String cfAtleta, String nome, String cognome, LocalDate dataNascita) {
-        this(cfAtleta, nome, cognome, dataNascita, null);
-    }
 
     public String getCfAtleta() {
         return cfAtleta;
     }
 
-    public String getNome() {
-        return nome;
-    }
 
-    public String getCognome() {
-        return cognome;
-    }
-
-    public LocalDate getDataNascita() {
-        return dataNascita;
-    }
-
-    public PersonalTrainer getPersonalTrainer() {
-        return personalTrainer;
-    }
 
     @Override
     public String toString() {

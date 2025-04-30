@@ -68,7 +68,6 @@ public class AtletaView {
 
         LocalDate dataAllenamento = LocalDate.parse(dataAll, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        // Creazione di oggetti per SessioneAllenamento, Atleta, Esercizio (usati nell'esempio)
         Atleta atleta = new Atleta(cfAtleta);
         SessioneAllenamento sessione = new SessioneAllenamento(atleta, dataAllenamento);
         Esercizio esercizio = new Esercizio(codiceEs);

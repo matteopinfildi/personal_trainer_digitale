@@ -32,15 +32,12 @@ public class PersonalTrainerController implements Controller {
 
     private void assegnazionePersonalTrainer() {
         try {
-            // Prendi i dati dal view
             String cfAtleta = PersonalTrainerView.getCfAtleta();
             String cfPersonal = PersonalTrainerView.getCfPersonal();
 
-            // Aggiungi la logica per l'assegnazione nel DAO
             AssegnaPersonalDAO dao = new AssegnaPersonalDAO();
             dao.assegnaPersonal(cfAtleta, cfPersonal);
 
-            // Risultato operazione
             PersonalTrainerView.showOutput("Personal Trainer assegnato con successo!");
         } catch (DAOException e) {
             PersonalTrainerView.showOutput("Errore: " + e.getMessage());
@@ -49,7 +46,7 @@ public class PersonalTrainerController implements Controller {
 
     private void creazioneSchedaAttiva() {
         try {
-            SchedaAllenamento scheda = PersonalTrainerView.getScheda(); // input da utente
+            SchedaAllenamento scheda = PersonalTrainerView.getScheda();
             SchedaAllenamentoDAO dao = new SchedaAllenamentoDAO();
             dao.creazioneSchedaAttiva(scheda);
             PersonalTrainerView.showOutput("Scheda attiva creata con successo!");
@@ -60,15 +57,12 @@ public class PersonalTrainerController implements Controller {
 
     private void associaEsercizioScheda() {
         try {
-            // Richiesta dei dati all'utente
             int codiceEs = PersonalTrainerView.getCodiceEsercizio();
             int idScheda = PersonalTrainerView.getIdScheda();
 
-            // Creazione del DAO e chiamata del metodo
             AssociaEsercizioSchedaDAO dao = new AssociaEsercizioSchedaDAO();
             dao.associaEsercizioScheda(codiceEs, idScheda);
 
-            // Output successivo
             PersonalTrainerView.showOutput("Esercizio associato alla scheda con successo!");
         } catch (DAOException e) {
             PersonalTrainerView.showOutput(e.getMessage());
@@ -87,20 +81,16 @@ public class PersonalTrainerController implements Controller {
 
     private void generaReport() {
         try {
-            // Chiedi all'utente le date per il report
             String dataInizioStr = PersonalTrainerView.getDataInizio();
             String dataFineStr = PersonalTrainerView.getDataFine();
             String cfPersonal = PersonalTrainerView.getCfPersonal();
 
-            // Converti le stringhe in oggetti java.sql.Date
             java.sql.Date dataInizio = java.sql.Date.valueOf(dataInizioStr);
             java.sql.Date dataFine = java.sql.Date.valueOf(dataFineStr);
 
-            // Crea una connessione al database per generare il report
             ReportDAO dao = new ReportDAO();
             List<Report> report = dao.generaReport(dataInizio, dataFine, cfPersonal);
 
-            // Mostra il report all'utente
             PersonalTrainerView.showReport(report);
         } catch (DAOException e) {
             PersonalTrainerView.showOutput(e.getMessage());

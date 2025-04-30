@@ -5,7 +5,6 @@ import model.domain.Macchinario;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MacchinarioDAO {

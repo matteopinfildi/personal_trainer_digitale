@@ -15,13 +15,6 @@ public class PersonalTrainer {
         return cfPersonal;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
 
 
     @Override
