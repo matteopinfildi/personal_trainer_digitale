@@ -21,6 +21,8 @@ USE `personal_trainer_digitale` ;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`personal_trainer`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`personal_trainer` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`personal_trainer` (
   `cf_personal` VARCHAR(16) NOT NULL,
   `nome` VARCHAR(20) NOT NULL,
@@ -35,6 +37,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`atleta`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`atleta` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`atleta` (
   `cf_atleta` VARCHAR(16) NOT NULL,
   `nome` VARCHAR(20) NOT NULL,
@@ -55,6 +59,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`esercizi`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`esercizi` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
   `codice_es` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(20) NOT NULL,
@@ -72,6 +78,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`scheda_allenamento`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`scheda_allenamento` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
   `id_scheda` INT NOT NULL AUTO_INCREMENT,
   `cf_atleta` VARCHAR(16) NOT NULL,
@@ -92,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`scheda_allenamento` (
     FOREIGN KEY (`cf_personal`)
     REFERENCES `personal_trainer_digitale`.`personal_trainer` (`cf_personal`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 31
+AUTO_INCREMENT = 32
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -100,6 +108,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`contenuto`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`contenuto` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`contenuto` (
   `codice_es` INT NOT NULL,
   `id_scheda` INT NOT NULL,
@@ -120,6 +130,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`sessione_allenamento`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`sessione_allenamento` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`sessione_allenamento` (
   `cf_atleta` VARCHAR(16) NOT NULL,
   `data_allenamento` DATE NOT NULL,
@@ -137,6 +149,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`interagisce`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`interagisce` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`interagisce` (
   `cf_atleta` VARCHAR(16) NOT NULL,
   `data_allenamento` DATE NOT NULL,
@@ -160,6 +174,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`macchinario`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`macchinario` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`macchinario` (
   `codice_es` INT NOT NULL,
   `nome` VARCHAR(20) NOT NULL,
@@ -177,6 +193,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `personal_trainer_digitale`.`user`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `personal_trainer_digitale`.`user` ;
+
 CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`user` (
   `username` VARCHAR(30) NOT NULL,
   `password` VARCHAR(40) NOT NULL,
@@ -201,6 +219,9 @@ CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`report_allenamenti` (`cf
 -- -----------------------------------------------------
 -- procedure aggiorna_esercizi
 -- -----------------------------------------------------
+
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`aggiorna_esercizi`;
 
 DELIMITER $$
 USE `personal_trainer_digitale`$$
@@ -231,6 +252,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure aggiorna_macchinari
 -- -----------------------------------------------------
+
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`aggiorna_macchinari`;
 
 DELIMITER $$
 USE `personal_trainer_digitale`$$
@@ -264,6 +288,9 @@ DELIMITER ;
 -- procedure archivia_scheda_attiva
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`archivia_scheda_attiva`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `archivia_scheda_attiva`(IN var_id_scheda INT)
@@ -291,6 +318,9 @@ DELIMITER ;
 -- procedure assegna_personal
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`assegna_personal`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `assegna_personal`(in var_cf_atleta VARCHAR(16), in var_cf_personal VARCHAR(16))
@@ -301,7 +331,8 @@ BEGIN
         RESIGNAL;
     END;
 
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+	SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.personal_trainer WHERE cf_personal = var_cf_personal) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Personal Trainer non trovato';
@@ -311,7 +342,6 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
 
-    START TRANSACTION;
 
 	UPDATE `personal_trainer_digitale`.`atleta`
     SET `cf_personal` = var_cf_personal
@@ -326,41 +356,43 @@ DELIMITER ;
 -- procedure associa_esercizio_scheda
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`associa_esercizio_scheda`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `associa_esercizio_scheda`(in var_codice_es INT, in var_id_scheda INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `associa_esercizio_scheda`(IN var_codice_es INT, IN var_id_scheda INT)
 BEGIN
-	DECLARE esiste_esercizio INT;
-    DECLARE esiste_scheda INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
 
-    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
     START TRANSACTION;
 
-    SELECT COUNT(*) INTO esiste_esercizio
-    FROM `personal_trainer_digitale`.`esercizi`
-    WHERE `codice_es` = var_codice_es;
-
-    IF esiste_esercizio = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esercizio non trovato';
+    IF NOT EXISTS (
+        SELECT 1
+        FROM `personal_trainer_digitale`.`esercizi`
+        WHERE `codice_es` = var_codice_es
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Esercizio non trovato';
     END IF;
 
-    SELECT COUNT(*) INTO esiste_scheda
-    FROM `personal_trainer_digitale`.`scheda_allenamento`
-    WHERE `id_scheda` = var_id_scheda AND `stato` = 1;
-
-    IF esiste_scheda = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Scheda di allenamento non trovata';
+    IF NOT EXISTS (
+        SELECT 1
+        FROM `personal_trainer_digitale`.`scheda_allenamento`
+        WHERE `id_scheda` = var_id_scheda
+          AND `stato` = 1
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Scheda di allenamento non attiva o non trovata';
     END IF;
 
-    INSERT INTO `personal_trainer_digitale`.`contenuto`
-    (`codice_es`, `id_scheda`)
-    VALUES
-    (var_codice_es, var_id_scheda);
+    INSERT INTO `personal_trainer_digitale`.`contenuto` (`codice_es`, `id_scheda`)
+    VALUES (var_codice_es, var_id_scheda);
 
     COMMIT;
 END$$
@@ -370,6 +402,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure creazione_scheda_attiva
 -- -----------------------------------------------------
+
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`creazione_scheda_attiva`;
 
 DELIMITER $$
 USE `personal_trainer_digitale`$$
@@ -434,6 +469,9 @@ DELIMITER ;
 -- procedure elimina_esercizio
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`elimina_esercizio`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `elimina_esercizio`(in var_codice_es INT)
@@ -469,6 +507,9 @@ DELIMITER ;
 -- procedure elimina_macchinario
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`elimina_macchinario`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `elimina_macchinario`(in var_nome VARCHAR(20))
@@ -494,6 +535,9 @@ DELIMITER ;
 -- procedure esercizio_completato
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`esercizio_completato`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `esercizio_completato`(in var_cf_atleta VARCHAR(16), in var_codice_es INT, in var_data_allenamento DATE)
@@ -504,8 +548,7 @@ BEGIN
         RESIGNAL;
 	END;
 
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
+	SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
     START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`sessione_allenamento` WHERE `cf_atleta` = var_cf_atleta) THEN
@@ -560,6 +603,9 @@ DELIMITER ;
 -- procedure esercizio_saltato
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`esercizio_saltato`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `esercizio_saltato`(in var_cf_atleta VARCHAR(16), in var_codice_es INT,  in var_data_allenamento DATE)
@@ -570,8 +616,7 @@ BEGIN
         RESIGNAL;
 	END;
 
-	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
+	SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
     START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`sessione_allenamento` WHERE `cf_atleta` = var_cf_atleta) THEN
@@ -631,6 +676,9 @@ DELIMITER ;
 -- procedure genera_report
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`genera_report`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `genera_report`(in var_data_inizio DATE, in var_data_fine DATE, in var_cf_personal VARCHAR(16))
@@ -670,6 +718,9 @@ DELIMITER ;
 -- procedure inserisci_atleta
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`inserisci_atleta`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `inserisci_atleta`(in var_cf_atleta VARCHAR(16), in var_nome VARCHAR(20), in var_cognome VARCHAR(20), in var_data_nascita DATE)
@@ -707,6 +758,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure inserisci_personal_trainer
 -- -----------------------------------------------------
+
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`inserisci_personal_trainer`;
 
 DELIMITER $$
 USE `personal_trainer_digitale`$$
@@ -747,6 +801,9 @@ DELIMITER ;
 -- procedure login
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`login`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `login`(in var_username VARCHAR(30), in var_password VARCHAR(20), out ruolo_out INT)
@@ -773,6 +830,9 @@ DELIMITER ;
 -- procedure registrazione_allenamento
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`registrazione_allenamento`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `registrazione_allenamento`(in var_cf_atleta VARCHAR(16), in var_data_allenamento DATE, in var_durata INT UNSIGNED)
@@ -784,8 +844,8 @@ BEGIN
 	END;
 
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-
     START TRANSACTION;
+
     IF NOT EXISTS (SELECT 1 FROM `personal_trainer_digitale`.`atleta` WHERE `cf_atleta` = var_cf_atleta) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Atleta non trovato';
     END IF;
@@ -805,6 +865,9 @@ DELIMITER ;
 -- procedure stampa_esercizio
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`stampa_esercizio`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `stampa_esercizio`(IN var_codice_es INT)
@@ -816,6 +879,7 @@ BEGIN
     END;
 
 	SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    SET TRANSACTION READ ONLY;
     START TRANSACTION;
 
     IF NOT EXISTS (
@@ -845,6 +909,9 @@ DELIMITER ;
 -- procedure visualizza_scheda_archiviata
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`visualizza_scheda_archiviata`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `visualizza_scheda_archiviata`(in var_cf_atleta VARCHAR(16))
@@ -857,6 +924,7 @@ BEGIN
 
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     SET TRANSACTION READ ONLY;
+    START TRANSACTION;
 
     IF NOT EXISTS (
         SELECT 1
@@ -874,8 +942,6 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Nessuna scheda archiviata per questo atleta';
     END IF;
-
-    START TRANSACTION;
 
     SELECT
         sa.id_scheda,
@@ -907,6 +973,9 @@ DELIMITER ;
 -- procedure visualizza_scheda_attiva
 -- -----------------------------------------------------
 
+USE `personal_trainer_digitale`;
+DROP procedure IF EXISTS `personal_trainer_digitale`.`visualizza_scheda_attiva`;
+
 DELIMITER $$
 USE `personal_trainer_digitale`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `visualizza_scheda_attiva`(in var_cf_atleta VARCHAR(16))
@@ -919,7 +988,6 @@ BEGIN
 
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     SET TRANSACTION READ ONLY;
-
     START TRANSACTION;
 
     IF NOT EXISTS (SELECT 1 FROM personal_trainer_digitale.atleta WHERE cf_atleta = var_cf_atleta) THEN
