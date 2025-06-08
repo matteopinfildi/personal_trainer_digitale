@@ -734,14 +734,7 @@ BEGIN
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     START TRANSACTION;
 
-    IF EXISTS (
-        SELECT 1
-        FROM `personal_trainer_digitale`.`atleta`
-        WHERE `cf_atleta` = var_cf_atleta
-    ) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Atleta già presente nel sistema';
-    END IF;
+
 
     INSERT INTO `personal_trainer_digitale`.`atleta` (
         `cf_atleta`, `nome`, `cognome`, `data_nascita`, `cf_personal`
@@ -774,15 +767,6 @@ BEGIN
 
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     START TRANSACTION;
-
-    IF EXISTS (
-        SELECT 1
-        FROM `personal_trainer_digitale`.`personal_trainer`
-        WHERE `cf_personal` = var_cf_personal
-    ) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Personal trainer già presente nel sistema';
-    END IF;
 
     INSERT INTO `personal_trainer_digitale`.`personal_trainer` (
         `cf_personal`, `nome`, `cognome`
