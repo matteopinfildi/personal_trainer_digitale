@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `personal_trainer_digitale`.`esercizi` (
   PRIMARY KEY (`codice_es`),
   UNIQUE INDEX `codice_es_UNIQUE` (`codice_es` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 18
+AUTO_INCREMENT = 19
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -731,7 +731,7 @@ BEGIN
         RESIGNAL;
     END;
 
-    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     START TRANSACTION;
 
     IF EXISTS (
@@ -772,7 +772,7 @@ BEGIN
         RESIGNAL;
     END;
 
-    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
     START TRANSACTION;
 
     IF EXISTS (
@@ -1031,6 +1031,7 @@ DELIMITER ;
 -- View `personal_trainer_digitale`.`dettagli_esercizi`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `personal_trainer_digitale`.`dettagli_esercizi`;
+DROP VIEW IF EXISTS `personal_trainer_digitale`.`dettagli_esercizi` ;
 USE `personal_trainer_digitale`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`dettagli_esercizi` AS select `e`.`codice_es` AS `codice_es`,`e`.`nome` AS `nome_esercizio`,`e`.`descrizione` AS `descrizione_esercizio`,`e`.`num_serie` AS `num_serie`,`e`.`ripetizioni` AS `ripetizioni`,`m`.`nome` AS `nome_macchinario`,`m`.`descrizione` AS `descrizione_macchinario` from (`personal_trainer_digitale`.`esercizi` `e` left join `personal_trainer_digitale`.`macchinario` `m` on((`e`.`codice_es` = `m`.`codice_es`)));
 
@@ -1038,10 +1039,10 @@ CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY D
 -- View `personal_trainer_digitale`.`report_allenamenti`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `personal_trainer_digitale`.`report_allenamenti`;
+DROP VIEW IF EXISTS `personal_trainer_digitale`.`report_allenamenti` ;
 USE `personal_trainer_digitale`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `personal_trainer_digitale`.`report_allenamenti` AS select `a`.`cf_atleta` AS `cf_atleta`,concat(`a`.`nome`,' ',`a`.`cognome`) AS `nome_atleta`,`sa`.`data_allenamento` AS `data_allenamento`,`sa`.`durata` AS `durata`,ifnull(`sa_scheda`.`id_scheda`,'Nessuna scheda') AS `id_scheda`,ifnull(`sa_scheda`.`descrizione`,'Nessuna scheda') AS `descrizione_scheda`,ifnull(`sa_scheda`.`esercizi_assegnati`,0) AS `esercizi_assegnati`,count(`i`.`codice_es`) AS `esercizi_eseguiti`,sum((case when (`i`.`saltato` = 0) then 1 else 0 end)) AS `esercizi_completati`,sum((case when (`i`.`saltato` = 1) then 1 else 0 end)) AS `esercizi_saltati`,sum((case when ((`i`.`saltato` = 0) or (`i`.`saltato` = 1)) then 1 else 0 end)) AS `totale_esercizi`,round(ifnull(((sum((case when (`i`.`saltato` = 0) then 1 else 0 end)) * 100.0) / nullif(count(`i`.`codice_es`),0)),2),0) AS `percentuale_completamento`,`a`.`cf_personal` AS `cf_personal` from (((`personal_trainer_digitale`.`atleta` `a` join `personal_trainer_digitale`.`sessione_allenamento` `sa` on((`a`.`cf_atleta` = `sa`.`cf_atleta`))) join `personal_trainer_digitale`.`interagisce` `i` on(((`i`.`cf_atleta` = `sa`.`cf_atleta`) and (`i`.`data_allenamento` = `sa`.`data_allenamento`)))) left join (select `s1`.`id_scheda` AS `id_scheda`,`s1`.`cf_atleta` AS `cf_atleta`,`s1`.`descrizione` AS `descrizione`,`s1`.`data_creazione` AS `data_creazione`,(select count(0) from `personal_trainer_digitale`.`contenuto` `c` where (`c`.`id_scheda` = `s1`.`id_scheda`)) AS `esercizi_assegnati` from `personal_trainer_digitale`.`scheda_allenamento` `s1`) `sa_scheda` on(((`sa_scheda`.`cf_atleta` = `a`.`cf_atleta`) and (`sa_scheda`.`data_creazione` = (select max(`s2`.`data_creazione`) from `personal_trainer_digitale`.`scheda_allenamento` `s2` where ((`s2`.`cf_atleta` = `a`.`cf_atleta`) and (`s2`.`data_creazione` <= `sa`.`data_allenamento`))))))) group by `a`.`cf_atleta`,`a`.`nome`,`a`.`cognome`,`sa`.`data_allenamento`,`sa`.`durata`,`sa_scheda`.`id_scheda`,`sa_scheda`.`descrizione`,`sa_scheda`.`esercizi_assegnati`,`a`.`cf_personal`;
 USE `personal_trainer_digitale`;
-
 
 DELIMITER $$
 
@@ -1202,6 +1203,8 @@ GRANT EXECUTE ON procedure `personal_trainer_digitale`.`aggiorna_esercizi` TO 'g
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`aggiorna_macchinari` TO 'gestoreUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`elimina_esercizio` TO 'gestoreUser';
 GRANT EXECUTE ON procedure `personal_trainer_digitale`.`elimina_macchinario` TO 'gestoreUser';
+GRANT EXECUTE ON procedure `personal_trainer_digitale`.`inserisci_atleta` TO 'gestoreUser';
+GRANT EXECUTE ON procedure `personal_trainer_digitale`.`inserisci_personal_trainer` TO 'gestoreUser';
 GRANT SELECT ON personal_trainer_digitale.esercizi TO 'gestoreUser';
 SET SQL_MODE = '';
 
