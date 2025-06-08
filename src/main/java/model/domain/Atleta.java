@@ -24,6 +24,11 @@ public class Atleta {
         return cfAtleta;
     }
 
+    public String getNome() {return nome;}
+
+    public String getCognome() {return cognome;}
+
+    public LocalDate getDataNascita() {return dataNascita;}
 
 
     @Override

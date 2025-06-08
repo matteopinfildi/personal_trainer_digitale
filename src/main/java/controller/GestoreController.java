@@ -1,13 +1,9 @@
 package controller;
 
 import exception.DAOException;
-import model.dao.ConnectionFactory;
-import model.dao.EserciziDAO;
-import model.dao.MacchinarioDAO;
-import model.domain.Esercizio;
-import model.domain.Macchinario;
+import model.dao.*;
+import model.domain.*;
 import model.view.GestoreView;
-import model.domain.Role;
 
 import java.io.IOException;
 
@@ -25,7 +21,9 @@ public class GestoreController implements Controller {
                 case 2 -> eliminaEsercizio();
                 case 3 -> aggiungiMacchinario();
                 case 4 -> eliminaMacchinario();
-                case 5 -> System.exit(0);
+                case 5 -> inserisciAtleta();
+                case 6 -> inserisciPersonal();
+                case 7 -> System.exit(0);
             }
         }
     }
@@ -85,4 +83,29 @@ public class GestoreController implements Controller {
             GestoreView.showOutput("Errore nell'eliminare il macchinario: " + e.getMessage());
         }
     }
+
+    private void inserisciAtleta() {
+        try {
+            Atleta atleta = GestoreView.getAtleta();
+            AtletaDAO dao = new AtletaDAO();
+            dao.inserisciAtleta(atleta);
+            GestoreView.showOutput("Atleta inserito con successo!");
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore inserimento atleta: " + e.getMessage());
+        } catch (IOException e) {
+            GestoreView.showOutput("Errore di input: " + e.getMessage());
+        }
+    }
+
+    private void inserisciPersonal() {
+        try {
+            PersonalTrainer pt = GestoreView.getPersonalTrainer();
+            PersonalTrainerDAO dao = new PersonalTrainerDAO();
+            dao.inserisciPersonalTrainer(pt);
+            GestoreView.showOutput("Personal trainer inserito con successo!");
+        } catch (DAOException e) {
+            GestoreView.showOutput("Errore inserimento personal trainer: " + e.getMessage());
+        }
+    }
+
 }
