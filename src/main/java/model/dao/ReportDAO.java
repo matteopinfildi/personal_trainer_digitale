@@ -29,7 +29,7 @@ public class ReportDAO {
                         rs.getInt("durata"),
                         rs.getInt("id_scheda"),
                         rs.getString("descrizione_scheda"),
-                        rs.getInt("totale_esercizi"),
+                        rs.getInt("esercizi_totali"),
                         rs.getInt("esercizi_completati"),
                         rs.getInt("esercizi_saltati"),
                         rs.getDouble("percentuale_completamento")
