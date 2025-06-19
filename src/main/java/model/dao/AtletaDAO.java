@@ -15,17 +15,14 @@ public class AtletaDAO {
     public void inserisciAtleta(Atleta atleta) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
              CallableStatement stmt = conn.prepareCall(CALL_INSERT)) {
-            // Imposta i parametri in input alla stored procedure
             stmt.setString(1, atleta.getCfAtleta());
             stmt.setString(2, atleta.getNome());
             stmt.setString(3, atleta.getCognome());
             stmt.setDate(4, Date.valueOf(atleta.getDataNascita()));
 
-            // Esecuzione
             stmt.execute();
 
         } catch (SQLException e) {
-            // Rilascia eccezione personalizzata per il controller
             throw new DAOException("Errore inserimento atleta: " + e.getMessage());
         }
     }
